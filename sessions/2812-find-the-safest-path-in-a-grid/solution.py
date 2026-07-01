@@ -22,18 +22,18 @@ class Solution:
         return safeness_list[index]
 
     
-    def TryConstructPath(self, SFM: Grid, min_safeness: int) -> bool:
+    def TryConstructPath(self, SFM: Grid, max_safeness: int) -> bool:
         def constructPathBFS(cell_in_path: set[tuple[int, int]], pos: tuple[int, int]) -> bool:
             if pos[0] not in range(0, len(SFM[0])) or pos[1] not in range(0, len(SFM)):
                 return False
 
-            if SFM[pos[0]][pos[1]] > min_safeness:
+            if SFM[pos[0]][pos[1]] < max_safeness:
                 return False
             
             if pos in cell_in_path:
                 return False
             
-            if pos[0] == len(SFM[0]) and pos[1] == len(SFM[0]):
+            if pos[0] == len(SFM[0])-1 and pos[1] == len(SFM[0])-1:
                 return True
         
             cell_in_path.add(pos)
