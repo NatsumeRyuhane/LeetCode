@@ -57,4 +57,10 @@ class Solution:
 
 ## User's restatement
 
-_(Filled in during UNDERSTANDING-CHECK — the user's own words.)_
+1. The safeness factor is tied to each cell — the Manhattan distance from a cell
+   to its nearest thief.
+2. Resembles the "count paths from [0,0] to [n-1,n-1]" problem. A DP problem with
+   a twist: you can enter a cell from any surrounding cell and exit in another
+   direction, so walking through a cell gives `min(safeness_in, safeness_this,
+   safeness_out)`. Question is how to conduct the search. The safeness map can be
+   built via a BFS flooding that stops at the first thief.
