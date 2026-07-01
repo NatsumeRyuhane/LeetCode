@@ -1,4 +1,5 @@
 from typing import List, TypeAlias
+from collections import deque
 
 Grid: TypeAlias = List[List[int]]
 
@@ -32,11 +33,12 @@ class Solution:
             return safeness_list[r]
 
     def TryConstructPath(self, SFM: Grid, max_safeness: int) -> bool:
-        queue: List[tuple[int, int]] = [(0, 0)]
+        queue: deque[tuple[int, int]] = deque()
         cell_in_path: set[tuple[int, int]] = set()
+        queue.append((0,0))
 
         while len(queue) != 0:
-            pos = queue.pop(0)
+            pos = queue.popleft()
 
             if pos[0] not in range(0, len(SFM[0])) or pos[1] not in range(0, len(SFM[0])):
                 continue
@@ -60,7 +62,7 @@ class Solution:
 
     def generateSafenessFactorMatrix(self, grid: Grid) -> Grid:
         SFM: Grid = []
-        queue: List[tuple[int, int, int]] = []
+        queue: deque[tuple[int, int, int]] = deque()
         for i in range(0, len(grid[0])):
             SFM.append([])
             for j in range(0, len(grid[i])):
@@ -74,7 +76,7 @@ class Solution:
                     
 
         while len(queue) != 0:
-            pos = queue.pop(0)
+            pos = queue.popleft()
             if pos[0] not in range(0, len(SFM[0])) or pos[1] not in range(0, len(SFM[0])):
                 continue
 
