@@ -13,14 +13,23 @@ class Solution:
                 safeness_set.add(j)
 
         safeness_list = sorted(list(safeness_set), reverse=True)
-        max_safeness = max(
+        max_safeness = min(
             safeness_list[0], SFM[0][0], SFM[len(grid)-1][len(grid)-1])
 
-        index = safeness_list.index(max_safeness)
-        while not self.TryConstructPath(SFM, safeness_list[index]):
-            index += 1
+        l = safeness_list.index(max_safeness)
+        r = len(safeness_list)
+        while r-l > 1:
+            mid = l + (r-l)//2
 
-        return safeness_list[index]
+            if self.TryConstructPath(SFM, safeness_list[mid]):
+                l = mid
+            else:
+                r = mid
+
+        if self.TryConstructPath(SFM, safeness_list[l]):
+            return safeness_list[l]
+        else:
+            return safeness_list[r]
 
     def TryConstructPath(self, SFM: Grid, max_safeness: int) -> bool:
         queue: List[tuple[int, int]] = [(0, 0)]
