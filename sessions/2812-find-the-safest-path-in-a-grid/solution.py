@@ -48,36 +48,28 @@ class Solution:
 
     def generateSafenessFactorMatrix(self, grid: Grid) -> Grid:
         SFM: Grid = []
+        queue: List[tuple[int, int, int]] = []
         for i in range(0, len(grid[0])):
             SFM.append([])
             for j in range(0, len(grid[i])):
-                SFM[i].append(self.thiefBFS((i, j), grid))
+                if grid[i][j] == 1:
+                    SFM[i].append(0)
+                else:
+                    SFM[i].append(99999)
+                    queue.append((i, j, 0))
+
+        while len(queue) != 0:
+            pos = queue.pop(0)
+            if pos[0] not in range(0, len(SFM[0])) or pos[1] not in range(0, len(SFM[0])):
+                continue
+        
+            if SFM[pos[0]][pos[1]] < pos[2]:
+                continue
+
+            SFM[pos[0]][pos[1]] = pos[2]
+            queue.append((pos[0]+1, pos[1], pos[2]+1))
+            queue.append((pos[0]-1, pos[1], pos[2]+1))
+            queue.append((pos[0], pos[1]+1, pos[2]+1))
+            queue.append((pos[0], pos[1]-1, pos[2]+1))
 
         return SFM
-
-    def thiefBFS(self, pos: tuple[int, int], grid: Grid) -> int:
-        def BFSProcess(grid: Grid, checked: set[tuple[int, int]], queue: List[tuple[int, int, int]]) -> int:
-            while not len(queue) == 0:
-                pos = queue.pop(0)
-
-                if pos[0] not in range(0, len(grid[0])) or pos[1] not in range(0, len(grid[0])):
-                    continue
-
-                if pos in checked:
-                    continue
-
-                if grid[pos[0]][pos[1]] == 1:
-                    return pos[2]
-
-                else:
-                    checked.add((pos[0], pos[1]))
-                    distance = pos[2]
-                    queue.append((pos[0]+1, pos[1], distance+1))
-                    queue.append((pos[0]-1, pos[1], distance+1))
-                    queue.append((pos[0], pos[1]+1, distance+1))
-                    queue.append((pos[0], pos[1]-1, distance+1))
-
-            # should not be possible
-            return -1
-
-        return BFSProcess(grid, set(), [(pos[0], pos[1], 0)])
