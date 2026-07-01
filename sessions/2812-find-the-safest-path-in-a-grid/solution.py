@@ -29,9 +29,6 @@ class Solution:
         while len(queue) != 0:
             pos = queue.pop(0)
 
-            if pos[0] == len(SFM[0])-1 and pos[1] == len(SFM[0])-1:
-                return True
-
             if pos[0] not in range(0, len(SFM[0])) or pos[1] not in range(0, len(SFM[0])):
                 continue
 
@@ -40,6 +37,9 @@ class Solution:
         
             if SFM[pos[0]][pos[1]] < max_safeness:
                 continue
+
+            if pos[0] == len(SFM[0])-1 and pos[1] == len(SFM[0])-1:
+                return True
 
             cell_in_path.add(pos)
             queue.append((pos[0]+1, pos[1]))

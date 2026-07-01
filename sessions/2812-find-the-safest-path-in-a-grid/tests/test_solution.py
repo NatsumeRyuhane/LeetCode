@@ -22,3 +22,9 @@ def test_example_3():
         [1, 0, 0, 0],
     ]
     assert Solution().maximumSafenessFactor(grid) == 2
+
+
+def test_dense_thieves_3x3():
+    # WA case from the judge. Expected value verified with a brute-force reference.
+    grid = [[0, 1, 1], [0, 1, 1], [0, 0, 1]]
+    assert Solution().maximumSafenessFactor(grid) == 0
