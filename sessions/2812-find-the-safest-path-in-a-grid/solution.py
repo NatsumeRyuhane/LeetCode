@@ -33,61 +33,50 @@ class Solution:
             return safeness_list[r]
 
     def TryConstructPath(self, SFM: Grid, max_safeness: int) -> bool:
+        n = len(SFM)
+        # The path must both start and end on cells that clear the threshold.
+        if SFM[0][0] < max_safeness:
+            return False
+
+        visited = [[False] * n for _ in range(n)]
+        visited[0][0] = True
         queue: deque[tuple[int, int]] = deque()
-        cell_in_path: set[tuple[int, int]] = set()
-        queue.append((0,0))
+        queue.append((0, 0))
 
-        while len(queue) != 0:
-            pos = queue.popleft()
-
-            if pos[0] not in range(0, len(SFM[0])) or pos[1] not in range(0, len(SFM[0])):
-                continue
-
-            if pos in cell_in_path:
-                continue
-        
-            if SFM[pos[0]][pos[1]] < max_safeness:
-                continue
-
-            if pos[0] == len(SFM[0])-1 and pos[1] == len(SFM[0])-1:
+        while queue:
+            r, c = queue.popleft()
+            if r == n - 1 and c == n - 1:
                 return True
-
-            cell_in_path.add(pos)
-            queue.append((pos[0]+1, pos[1]))
-            queue.append((pos[0]-1, pos[1]))
-            queue.append((pos[0], pos[1]+1))
-            queue.append((pos[0], pos[1]-1))
+            for nr, nc in ((r + 1, c), (r - 1, c), (r, c + 1), (r, c - 1)):
+                # Filter BEFORE enqueue: only in-bounds, unseen, safe-enough cells.
+                if (0 <= nr < n and 0 <= nc < n
+                        and not visited[nr][nc]
+                        and SFM[nr][nc] >= max_safeness):
+                    visited[nr][nc] = True
+                    queue.append((nr, nc))
 
         return False
 
     def generateSafenessFactorMatrix(self, grid: Grid) -> Grid:
-        SFM: Grid = []
-        queue: deque[tuple[int, int, int]] = deque()
-        for i in range(0, len(grid[0])):
-            SFM.append([])
-            for j in range(0, len(grid[i])):
+        n = len(grid)
+        # 0 at thieves (the BFS sources), 99999 marks "not yet reached".
+        SFM: Grid = [
+            [0 if grid[i][j] == 1 else 99999 for j in range(n)]
+            for i in range(n)
+        ]
+        queue: deque[tuple[int, int]] = deque()
+        for i in range(n):
+            for j in range(n):
                 if grid[i][j] == 1:
-                    SFM[i].append(0)
-                    queue.append((i, j, 0))
-                else:
-                    SFM[i].append(99999)
+                    queue.append((i, j))
 
-        visited: set[tuple[int, int]] = set()
-                    
-
-        while len(queue) != 0:
-            pos = queue.popleft()
-            if pos[0] not in range(0, len(SFM[0])) or pos[1] not in range(0, len(SFM[0])):
-                continue
-
-            if (pos[0], pos[1]) in visited:
-                continue
-        
-            visited.add((pos[0], pos[1]))
-            SFM[pos[0]][pos[1]] = pos[2]
-            queue.append((pos[0]+1, pos[1], pos[2]+1))
-            queue.append((pos[0]-1, pos[1], pos[2]+1))
-            queue.append((pos[0], pos[1]+1, pos[2]+1))
-            queue.append((pos[0], pos[1]-1, pos[2]+1))
+        while queue:
+            r, c = queue.popleft()
+            d = SFM[r][c]
+            for nr, nc in ((r + 1, c), (r - 1, c), (r, c + 1), (r, c - 1)):
+                # Filter BEFORE enqueue; SFM == 99999 doubles as the "unvisited" flag.
+                if 0 <= nr < n and 0 <= nc < n and SFM[nr][nc] == 99999:
+                    SFM[nr][nc] = d + 1
+                    queue.append((nr, nc))
 
         return SFM
