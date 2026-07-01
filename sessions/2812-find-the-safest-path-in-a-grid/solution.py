@@ -54,9 +54,10 @@ class Solution:
             for j in range(0, len(grid[i])):
                 if grid[i][j] == 1:
                     SFM[i].append(0)
+                    queue.append((i, j, 0))
                 else:
                     SFM[i].append(99999)
-                    queue.append((i, j, 0))
+                    
 
         while len(queue) != 0:
             pos = queue.pop(0)
