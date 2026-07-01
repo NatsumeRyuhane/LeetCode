@@ -64,12 +64,12 @@ class Solution:
         def BFSProcess(distance: int, grid: Grid, checked: set[tuple[int, int]], queue: List[tuple[int, int]]) -> int:
             while not len(queue) == 0:
                 pos = queue.pop()
-                
+
                 if pos[0] not in range(0, len(grid[0])) or pos[1] not in range(0, len(grid[0])):
-                    return -1
+                    continue
                 
                 if pos in checked:
-                    return -1
+                    continue
                 
                 if grid[pos[0]][pos[1]] == 1:
                     return distance
@@ -83,8 +83,8 @@ class Solution:
                     queue.append((pos[0], pos[1]+1))
                     queue.append((pos[0], pos[1]-1))
 
-                    # should not be possible
-                    return -1
+            # should not be possible
+            return -1
                 
             
         return BFSProcess(0, grid, set(), [pos])
