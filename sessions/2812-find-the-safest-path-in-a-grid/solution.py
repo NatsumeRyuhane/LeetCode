@@ -30,6 +30,9 @@ class Solution:
             if SFM[pos[0]][pos[1]] > min_safeness:
                 return False
             
+            if pos in cell_in_path:
+                return False
+            
             if pos[0] == len(SFM[0]) and pos[1] == len(SFM[0]):
                 return True
         
