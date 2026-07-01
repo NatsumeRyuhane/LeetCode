@@ -1,0 +1,15 @@
+[project]
+name = "leetcode-drills"
+version = "0.1.0"
+description = "Socratic LeetCode practice repo (managed by the leetcode-coach skill)"
+requires-python = ">=3.11"
+dependencies = []
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+# Tests import their sibling solution.py via each problem's tests/conftest.py,
+# which injects sessions/<id>/ onto sys.path. Run scoped:
+#   uv run pytest sessions/<NNNN>-<slug>/tests/
