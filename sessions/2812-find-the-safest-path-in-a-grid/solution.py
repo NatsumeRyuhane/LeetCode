@@ -22,9 +22,9 @@ class Solution:
             mid = l + (r-l)//2
 
             if self.TryConstructPath(SFM, safeness_list[mid]):
-                l = mid
-            else:
                 r = mid
+            else:
+                l = mid
 
         if self.TryConstructPath(SFM, safeness_list[l]):
             return safeness_list[l]
