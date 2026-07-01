@@ -60,16 +60,19 @@ class Solution:
                     queue.append((i, j, 0))
                 else:
                     SFM[i].append(99999)
+
+        visited: set[tuple[int, int]] = set()
                     
 
         while len(queue) != 0:
             pos = queue.pop(0)
             if pos[0] not in range(0, len(SFM[0])) or pos[1] not in range(0, len(SFM[0])):
                 continue
-        
-            if SFM[pos[0]][pos[1]] <= pos[2]:
-                continue
 
+            if (pos[0], pos[1]) in visited:
+                continue
+        
+            visited.add((pos[0], pos[1]))
             SFM[pos[0]][pos[1]] = pos[2]
             queue.append((pos[0]+1, pos[1], pos[2]+1))
             queue.append((pos[0]-1, pos[1], pos[2]+1))
