@@ -61,7 +61,7 @@ class Solution:
             
 
     def thiefBFS(self, pos: tuple[int, int], grid: Grid) -> int:
-        def BFSProcess(distance: int, grid: Grid, pos: tuple[int, int], checked: set[tuple[int, int]]) -> int:
+        def BFSProcess(distance: int, grid: Grid, pos: tuple[int, int], checked: set[tuple[int, int]], queue: List[tuple[int, int]]) -> int:
             if pos[0] not in range(0, len(grid[0])) or pos[1] not in range(0, len(grid[0])):
                 return -1
             
@@ -70,15 +70,20 @@ class Solution:
             
             if grid[pos[0]][pos[1]] == 1:
                 return distance
+            
             else:
                 checked.add(pos)
-                return max(
-                    BFSProcess(distance+1, grid, (pos[0]-1, pos[1]), checked),
-                    BFSProcess(distance+1, grid, (pos[0]+1, pos[1]), checked),
-                    BFSProcess(distance+1, grid, (pos[0], pos[1]-1), checked),
-                    BFSProcess(distance+1, grid, (pos[0], pos[1]+1), checked),
-                )
+                distance += 1
+                while not len(queue) == 0:
+                    queue.append((pos[0]+1, pos[1]))
+                    queue.append((pos[0]-1, pos[1]))
+                    queue.append((pos[0], pos[1]+1))
+                    queue.append((pos[0], pos[1]-1))
+
+                # should not be possible
+                return -1
+                
             
-        return BFSProcess(0, grid, pos, set())
+        return BFSProcess(0, grid, pos, set(), [pos])
             
 
