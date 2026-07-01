@@ -23,7 +23,7 @@ class Solution:
         return safeness_list[index]
 
     def TryConstructPath(self, SFM: Grid, max_safeness: int) -> bool:
-        queue: List[tuple[int, int]] = []
+        queue: List[tuple[int, int]] = [(0, 0)]
         cell_in_path: set[tuple[int, int]] = set()
 
         while len(queue) != 0:
@@ -33,6 +33,9 @@ class Solution:
                 return True
 
             if pos[0] not in range(0, len(SFM[0])) or pos[1] not in range(0, len(SFM[0])):
+                continue
+
+            if pos in cell_in_path:
                 continue
         
             if SFM[pos[0]][pos[1]] < max_safeness:
