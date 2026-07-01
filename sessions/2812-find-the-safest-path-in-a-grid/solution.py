@@ -23,28 +23,28 @@ class Solution:
         return safeness_list[index]
 
     def TryConstructPath(self, SFM: Grid, max_safeness: int) -> bool:
-        def constructPathBFS(cell_in_path: set[tuple[int, int]], pos: tuple[int, int]) -> bool:
-            if pos[0] not in range(0, len(SFM[0])) or pos[1] not in range(0, len(SFM)):
-                return False
+        queue: List[tuple[int, int]] = []
+        cell_in_path: set[tuple[int, int]] = set()
 
-            if SFM[pos[0]][pos[1]] < max_safeness:
-                return False
-
-            if pos in cell_in_path:
-                return False
+        while len(queue) != 0:
+            pos = queue.pop(0)
 
             if pos[0] == len(SFM[0])-1 and pos[1] == len(SFM[0])-1:
                 return True
 
-            cell_in_path.add(pos)
-            return (
-                constructPathBFS(cell_in_path, (pos[0]-1, pos[1])) or
-                constructPathBFS(cell_in_path, (pos[0]+1, pos[1])) or
-                constructPathBFS(cell_in_path, (pos[0], pos[1]-1)) or
-                constructPathBFS(cell_in_path, (pos[0], pos[1]+1))
-            )
+            if pos[0] not in range(0, len(SFM[0])) or pos[1] not in range(0, len(SFM[0])):
+                continue
+        
+            if SFM[pos[0]][pos[1]] < max_safeness:
+                continue
 
-        return constructPathBFS(set(), (0, 0))
+            cell_in_path.add(pos)
+            queue.append((pos[0]+1, pos[1]))
+            queue.append((pos[0]-1, pos[1]))
+            queue.append((pos[0], pos[1]+1))
+            queue.append((pos[0], pos[1]-1))
+
+        return False
 
     def generateSafenessFactorMatrix(self, grid: Grid) -> Grid:
         SFM: Grid = []
@@ -64,7 +64,7 @@ class Solution:
             if pos[0] not in range(0, len(SFM[0])) or pos[1] not in range(0, len(SFM[0])):
                 continue
         
-            if SFM[pos[0]][pos[1]] < pos[2]:
+            if SFM[pos[0]][pos[1]] <= pos[2]:
                 continue
 
             SFM[pos[0]][pos[1]] = pos[2]
