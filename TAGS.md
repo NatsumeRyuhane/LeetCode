@@ -11,7 +11,7 @@ trailer or a `log.md` entry, so tags never fork into synonyms. Three namespaces.
 - `#structure:linked-list` — singly/doubly linked list manipulation
 - `#structure:tree` — binary tree / BST / n-ary traversal
 - `#structure:trie` — prefix tree
-- `#structure:graph` — adjacency list/matrix, nodes+edges
+- `#structure:graph` — adjacency list/matrix, nodes+edges (grids count)
 - `#structure:union-find` — disjoint set / connectivity
 
 ## `#technique:*` — the method that cracks it
@@ -23,6 +23,7 @@ trailer or a `log.md` entry, so tags never fork into synonyms. Three namespaces.
 - `#technique:greedy` — locally optimal choice
 - `#technique:backtracking` — build/prune candidate solutions
 - `#technique:bfs` — breadth-first search
+- `#technique:multi-source-bfs` — BFS seeded from many sources at once (distance-to-nearest field)
 - `#technique:dfs` — depth-first search / recursion
 - `#technique:prefix-sum` — cumulative aggregates
 - `#technique:sorting` — sort as a preprocessing step
@@ -30,8 +31,10 @@ trailer or a `log.md` entry, so tags never fork into synonyms. Three namespaces.
 
 ## `#weakness:*` — recurring stumbles to target (grows as they surface)
 - `#weakness:complexity-analysis` — miscounts or skips deriving big-O
-- `#weakness:off-by-one` — boundary/index errors
+- `#weakness:off-by-one` — boundary/index errors (incl. wrong search direction on a boundary)
 - `#weakness:missed-edge-case` — empties, duplicates, single element, overflow
 - `#weakness:pointer-bookkeeping` — loses track of links/indices during mutation
 - `#weakness:premature-implementation` — codes before the approach is sound
 - `#weakness:pattern-recognition` — doesn't map the problem to a known technique
+- `#weakness:refactor-regressions` — drops a guard/seed/invariant when restructuring working code
+- `#weakness:bfs-mechanics` — BFS/DFS confusion, per-cell vs shared distance, visited timing
