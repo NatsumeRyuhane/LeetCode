@@ -9,7 +9,7 @@ class Solution:
         self.width = len(grid[0])
         self.height = len(grid)
 
-        self.HP_cost_grid: Grid = [[-1] * self.width] * self.height
+        self.HP_cost_grid: Grid = [[-1] * self.width for _ in range(self.height)]
         current_HP_cost = self.get_value(grid, (0, 0))
         queue: deque[Coordinate] = deque()
         queue_next: deque[Coordinate] = deque()
@@ -24,10 +24,10 @@ class Solution:
                 pos = queue.popleft()
                 x, y = pos
 
-                if x == self.width and y == self.height:
+                if x == self.width-1 and y == self.height-1:
                     return True
 
-                self.HP_cost_grid[x][y] = h
+                self.HP_cost_grid[y][x] = h
 
                 neighbours = [
                     (x-1, y), (x+1, y), (x, y-1), (x, y+1)
@@ -41,9 +41,11 @@ class Solution:
                         continue
 
                     if self.get_value(grid, n) == 0:
-                        queue.append(n)
+                        if n not in queue:
+                            queue.append(n)
                     else:
-                        queue_next.append(n)
+                        if n not in queue_next:
+                            queue_next.append(n)
             
         return False
 
@@ -63,4 +65,4 @@ class Solution:
             return None
         else:
             x, y = pos
-            return grid[x][y]
+            return grid[y][x]
