@@ -18,8 +18,8 @@ class Solution:
         self.HP_cost_grid[0][0] = self.get_value(grid, (0, 0))
 
         for h in range(current_HP_cost, health):
-            queue = queue_next.copy()
-            queue_next.clear()
+            queue = queue_next
+            queue_next = deque()
 
             while len(queue) != 0:
                 pos = queue.popleft()
