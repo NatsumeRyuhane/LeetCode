@@ -24,6 +24,7 @@ trailer or a `log.md` entry, so tags never fork into synonyms. Three namespaces.
 - `#technique:backtracking` — build/prune candidate solutions
 - `#technique:bfs` — breadth-first search
 - `#technique:multi-source-bfs` — BFS seeded from many sources at once (distance-to-nearest field)
+- `#technique:0-1-bfs` — shortest path with only 0/1 edge weights; deque-based (push 0-cost to front, 1-cost to back) or round/bucket ordering, in place of a full Dijkstra heap
 - `#technique:dfs` — depth-first search / recursion
 - `#technique:prefix-sum` — cumulative aggregates
 - `#technique:sorting` — sort as a preprocessing step
