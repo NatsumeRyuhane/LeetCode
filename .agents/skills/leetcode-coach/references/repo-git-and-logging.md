@@ -5,6 +5,7 @@ Everything the coach writes to disk, plus the git conventions that make sessions
 ## Contents
 - [Repo layout](#repo-layout)
 - [Bootstrap](#bootstrap-state-0)
+- [The coachdb layer](#the-coachdb-layer)
 - [The pytest import trick](#the-pytest-import-trick)
 - [Git conventions](#git-conventions)
 - [File formats](#file-formats)
@@ -17,8 +18,14 @@ Everything the coach writes to disk, plus the git conventions that make sessions
 ├── .gitignore              # .venv/, __pycache__/, .pytest_cache/
 ├── pyproject.toml          # single repo-level uv project + pytest config
 ├── uv.lock
-├── NOTES.md                # coach scratchpad: rolling ability assessment + focus areas
+├── NOTES.md                # BOUNDED snapshot: current ability levels + focus (materialized view)
 ├── TAGS.md                 # canonical tag registry (source of truth for tags)
+├── tools/
+│   └── coachdb.py          # stdlib JSONL store + query CLI (copied in at bootstrap)
+├── db/                     # append-only JSONL, created lazily by coachdb
+│   ├── events.jsonl        # timeline: turns, state changes, hints, test runs (with gap_s)
+│   ├── sessions.jsonl      # one summary row per completed session
+│   └── assessments.jsonl   # one row per (session × dimension) — full assessment history
 └── sessions/
     └── 0146-lru-cache/
         ├── problem.md      # statement + link + the user's restated understanding
@@ -36,9 +43,58 @@ One uv env at the repo root serves every problem — leetcode rarely needs third
 Run only if the piece is missing; each step is idempotent.
 
 1. `git rev-parse --git-dir` — if it fails, `git init`.
-2. If no `pyproject.toml`, copy `assets/templates/pyproject.toml`, then `uv add --dev pytest` (creates `.venv/` and `uv.lock`).
+2. If no `pyproject.toml`, copy `assets/templates/pyproject.toml`, then `uv sync` (the template already declares pytest in `[dependency-groups]`; sync creates `.venv/` and `uv.lock` — no `uv add` needed).
 3. Copy `assets/templates/gitignore` → `.gitignore`, `NOTES.md`, `TAGS.md` if absent. Create `sessions/`.
-4. If the repo has no commits yet: `git add -A && git commit -m "chore: bootstrap leetcode practice repo"`.
+4. Copy `assets/tools/coachdb.py` → `tools/coachdb.py` if absent (`db/` is created lazily on first write). The copy — rather than invoking from the skill directory — keeps the repo self-contained.
+5. If the repo has no commits yet: `git add -A && git commit -m "chore: bootstrap leetcode practice repo"`. If the commit fails on missing git identity, ask the user for name/email rather than inventing one.
+
+## The coachdb layer
+
+Append-only JSONL under `db/`, driven by `tools/coachdb.py` (stdlib only — no deps, no env needed; run with `python3`). It exists so the coach can **pull specific records on demand instead of stuffing history into context**, and so timing becomes measurable. Rows are never edited — corrections are new rows — which keeps git diffs clean: a debrief commit's diff shows exactly the rows that session produced.
+
+**Session keys: `<NNNN>-<slug>@<YYYY-MM-DD>` — one key per sitting.** Redos get a new key (new date), so gap computation and `stats` never conflate attempts. The part before `@` is the problem key; the CLI auto-stores it as `problem` on every row, and `query --problem <NNNN>-<slug>` matches every sitting of a problem (with a fallback that derives it for rows logged before this convention). Two sittings on the same day: suffix `.2` manually.
+
+**Three tables:**
+
+```jsonc
+// events.jsonl — the timeline. `log` auto-stamps ts and computes gap_s since the
+// previous event in the same session (this is the response-latency measurement).
+{"ts":"2026-07-02T10:14:22-07:00","session":"3286-safe-walk@2026-07-01","problem":"3286-safe-walk","type":"hint",
+ "state":"APPROACH","level":"L1","note":"probed read-order","gap_s":142}
+
+// sessions.jsonl — one summary row per completed session, written at debrief.
+{"ts":"...","session":"3286-safe-walk@2026-07-01","problem":"3286-safe-walk","outcome":"solved-optimal","hints":["L1","L2"],
+ "tags":["#technique:bfs","#weakness:bfs-mechanics"],"time_complexity":"O(V+E)","space_complexity":"O(V)"}
+
+// assessments.jsonl — one row per (session × exercised dimension). Full history;
+// NOTES.md shows only the latest snapshot.
+{"ts":"...","session":"3286-safe-walk@2026-07-01","problem":"3286-safe-walk","dimension":"implementation-correctness",
+ "level":2,"evidence":"shipped mark-at-discovery a round late"}
+```
+
+**Event types:** `user-turn`, `state-change`, `hint` (with `--level`), `test-run`, `reveal` (L4), `note`.
+
+**CLI quick reference** (full `--help` on the script):
+
+```bash
+python3 tools/coachdb.py log --session <key> --type user-turn --state IMPLEMENTATION
+python3 tools/coachdb.py log --session <key> --type hint --level L2 --note "failing test: empty grid"
+python3 tools/coachdb.py session --session <key> --outcome solved-optimal --hints L1,L2 \
+    --tags "#technique:bfs,#weakness:bfs-mechanics" --time "O(V+E)" --space "O(V)"
+python3 tools/coachdb.py assess --session <key> --dimension complexity-analysis --level 4 \
+    --evidence "derived amortized copy() cost unaided"
+python3 tools/coachdb.py query sessions --tag "#weakness:off-by-one" --limit 5   # JSONL out
+python3 tools/coachdb.py query events --problem 0146-lru-cache                    # every sitting
+python3 tools/coachdb.py query events --session <key> --type hint                 # one sitting
+python3 tools/coachdb.py trend --dimension implementation-correctness             # level history
+python3 tools/coachdb.py stats --session <key>  # wall/active time, time-in-state,
+                                                # per-hint response latency, longest pauses
+                                                # (pauses pair "after" event with "resumed_with")
+```
+
+**Division of labor with git:** the db answers structured questions (tags, trends, timing); git answers narrative ones (what did the code look like, what was the attempt sequence). Commit trailers stay as a redundant grep path, but the db is the primary lookup.
+
+**Timing discipline:** the gap data only exists if `log` runs every turn — make it the first action on each user message. Interpret gaps per the rules in SKILL.md (weak signal, corroborate with content, >30 min ≈ break).
 
 ## The pytest import trick
 
@@ -117,8 +173,8 @@ Statement (pasted or fetched), source URL, difficulty, and — added during UNDE
 ### `log.md` (per problem, appended each session at DEBRIEF)
 One `## <date> — session N` section per attempt; never overwrite prior sections. Each contains: approach path, where they got stuck, hint levels used, final complexity (time/space), exposed weaknesses with the concrete moment each surfaced, and — on a redo — whether a previously flagged weakness resolved. Template in `assets/templates/log.md`.
 
-### `NOTES.md` (repo-level, the coach's rolling brain)
-Two parts: (1) the **ability assessment** across the six dimensions below, each with a level, a one-line justification from the most recent evidence, and a rough trend; (2) **focus next** — 2–3 concrete recommendations tied to tags (e.g. "drill `#technique:binary-search-on-answer` — two misses in the last three sessions"). Rewrite in place each debrief; this is a snapshot, not a log. Template in `assets/templates/NOTES.md`.
+### `NOTES.md` (repo-level, a bounded materialized view)
+NOTES.md must stay **constant-size** — it is a human-facing dashboard regenerated from the db each debrief, never an accumulating log. Two parts: (1) the **ability table** — per dimension exactly one row: latest level, *one line* of evidence from the most recent session that exercised it, and a trend arrow derived from `coachdb.py trend` (↑/→/↓ over the last few assessments); (2) **focus next** — at most three tag-linked recommendations. If you feel the urge to keep old evidence "for context", that's what `db/assessments.jsonl` is for — query it, don't hoard it. Template in `assets/templates/NOTES.md`.
 
 ### `TAGS.md` (repo-level registry)
 Three namespaces — `#structure:*`, `#technique:*`, `#weakness:*` — each a flat list with a one-line gloss. Add a tag here *before* using it in a commit trailer or log, so tags never fork into synonyms. Seed in `assets/templates/TAGS.md`.
@@ -142,4 +198,4 @@ Five-point scale, applied per dimension with evidence:
 - **4 proficient** — handled it unaided, cleanly.
 - **5 strong** — unaided, and articulated the *why* / tradeoffs.
 
-Record the level *and the moment it showed* ("complexity: 2 — claimed the nested loop was O(n), corrected only after a counting prompt"). Levels move slowly; one session nudges the picture, it doesn't rewrite it.
+Record each exercised dimension as a db row — `coachdb.py assess --dimension ... --level N --evidence "..."` — capturing the level *and the moment it showed* ("claimed the nested loop was O(n), corrected only after a counting prompt"). NOTES.md then shows only the latest snapshot per dimension; trends come from `coachdb.py trend`, not memory. Levels move slowly; one session nudges the picture, it doesn't rewrite it.
