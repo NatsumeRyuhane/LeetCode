@@ -1,0 +1,11 @@
+{"ts": "2026-07-02T12:50:21+08:00", "session": "0055-jump-game@2026-07-02", "problem": "0055-jump-game", "type": "user-turn", "state": "INTAKE"}
+{"ts": "2026-07-02T12:50:53+08:00", "session": "0055-jump-game@2026-07-02", "problem": "0055-jump-game", "type": "state-change", "state": "UNDERSTANDING-CHECK", "note": "intake-scaffolded", "gap_s": 32}
+{"ts": "2026-07-02T12:53:57+08:00", "session": "0055-jump-game@2026-07-02", "problem": "0055-jump-game", "type": "user-turn", "state": "UNDERSTANDING-CHECK", "gap_s": 184}
+{"ts": "2026-07-02T12:54:05+08:00", "session": "0055-jump-game@2026-07-02", "problem": "0055-jump-game", "type": "state-change", "state": "APPROACH", "note": "restatement-accepted-coverage-approach-proposed", "gap_s": 8}
+{"ts": "2026-07-02T12:56:13+08:00", "session": "0055-jump-game@2026-07-02", "problem": "0055-jump-game", "type": "user-turn", "state": "REVIEW", "gap_s": 128}
+{"ts": "2026-07-02T12:56:35+08:00", "session": "0055-jump-game@2026-07-02", "problem": "0055-jump-game", "type": "test-run", "state": "REVIEW", "note": "pytest interrupted: hang at solution.py:6 on provided examples", "gap_s": 22}
+{"ts": "2026-07-02T12:57:11+08:00", "session": "0055-jump-game@2026-07-02", "problem": "0055-jump-game", "type": "user-turn", "state": "REVIEW", "gap_s": 36}
+{"ts": "2026-07-02T12:57:23+08:00", "session": "0055-jump-game@2026-07-02", "problem": "0055-jump-game", "type": "test-run", "state": "REVIEW", "note": "provided examples pass locally after cur_pos increment", "gap_s": 12}
+{"ts": "2026-07-02T12:58:07+08:00", "session": "0055-jump-game@2026-07-02", "problem": "0055-jump-game", "type": "state-change", "state": "DEBRIEF", "note": "judge accepted 178/178", "gap_s": 44}
+{"ts": "2026-07-02T12:58:07+08:00", "session": "0055-jump-game@2026-07-02", "problem": "0055-jump-game", "type": "user-turn", "state": "POST-SUBMIT", "gap_s": 44}
+{"ts": "2026-07-02T12:58:24+08:00", "session": "0055-jump-game@2026-07-02", "problem": "0055-jump-game", "type": "hint", "state": "REVIEW", "level": "L1", "note": "trace loop progress after pytest hang", "gap_s": 17}
