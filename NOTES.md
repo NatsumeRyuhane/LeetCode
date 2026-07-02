@@ -12,15 +12,15 @@ Trend: ↑ / → / ↓ over the last few assessments (`coachdb.py trend --dimens
 
 | Dimension | Level | Latest evidence (one line) | Trend |
 |---|---|---|---|
-| Decomposition | 4 | 3286: framed the round-based-BFS plan cleanly at approach, unaided | → |
-| Pattern recognition | 4 | 3286: derived the monotonic-cost / 0-1-BFS argument unaided (coach never named it) | → |
-| Complexity analysis | 4 | 3286: judged `.copy()` linear-across-run, a non-bottleneck, and declined needless micro-opt | ↑ |
-| Implementation correctness | 2 | 3286: each fix lagged its own already-correct stated design by one bug | → |
+| Decomposition | 5 | 0055: restated start-at-0, reach-last, and up-to jump semantics accurately | ↑ |
+| Pattern recognition | 5 | 0055: proposed the max-coverage invariant unaided and justified contiguous reachability | ↑ |
+| Complexity analysis | 4 | 0055: chose a single left-to-right scan; final solution is O(n)/O(1), though not stated explicitly | → |
+| Implementation correctness | 3 | 0055: missed the loop increment at first, then self-diagnosed after one trace prompt | ↑ |
 | Edge-case handling | 2 | 2812: judge WA on endpoint-is-thief; no self-authored boundary tests (not exercised in 3286) | → |
-| Optimization | 4 | 3286: reached O(1) discovery-marking + deque-swap from Socratic probes, zero reveals | ↑ |
+| Optimization | 4 | 0055: started directly from the optimal coverage scan instead of enumerating jumps | → |
 
 ## Focus next
 
-- **`#weakness:refactor-regressions` — highest priority.** The shape shifted 2812→3286 from "loses an invariant while restructuring" to "code lags the design already stated correctly in words." Drill: write the invariant as a one-line comment/assertion *before* coding, then check the shipped code against it before declaring ready.
-- **`#weakness:bfs-mechanics` (visited timing).** Recurred 2812→3286 — could state "mark at discovery, not dequeue" in words but took a full TLE→band-aid→probe→redesign cycle to land it. Watch whether it ships right on the *first* pass next BFS/graph problem.
-- **`#weakness:missed-edge-case`.** Still no self-driven adversarial testing; both sessions' boundary breaks (2812 endpoint-is-thief WA, 3286 large-input TLE) came from the judge, not the user. Before submitting, write 1–2 own boundary cases.
+- **`#weakness:pointer-bookkeeping` — current priority.** 0055 had the correct invariant immediately, but the loop-control variable was not advanced in the first ready version. Drill: trace the changing variables on one provided example before declaring ready.
+- **`#weakness:refactor-regressions`.** The broader pattern is still "design is right in words, code lags by one guard/update." Keep writing the invariant before coding, then check the shipped loop/branch updates against it.
+- **`#weakness:missed-edge-case`.** Still little self-driven adversarial testing; before submitting, write 1-2 boundary cases even when the main idea feels obvious.
