@@ -12,15 +12,15 @@ Trend: ↑ / → / ↓ over the last few assessments (`coachdb.py trend --dimens
 
 | Dimension | Level | Latest evidence (one line) | Trend |
 |---|---|---|---|
-| Decomposition | 5 | 0055: restated start-at-0, reach-last, and up-to jump semantics accurately | ↑ |
-| Pattern recognition | 5 | 0055: proposed the max-coverage invariant unaided and justified contiguous reachability | ↑ |
-| Complexity analysis | 4 | 0055: chose a single left-to-right scan; final solution is O(n)/O(1), though not stated explicitly | → |
-| Implementation correctness | 3 | 0055: missed the loop increment at first, then self-diagnosed after one trace prompt | ↑ |
-| Edge-case handling | 2 | 2812: judge WA on endpoint-is-thief; no self-authored boundary tests (not exercised in 3286) | → |
-| Optimization | 4 | 0055: started directly from the optimal coverage scan instead of enumerating jumps | → |
+| Decomposition | 5 | 0045: restated forward-only movement, minimum jumps, and guaranteed reachability accurately | ↑ |
+| Pattern recognition | 4 | 0045: moved from DP/heap to BFS/FIFO ordering after light prompting | → |
+| Complexity analysis | 3 | 0045: found repeated range scans after prompt; needed L2 for the contiguous processed boundary | ↓ |
+| Implementation correctness | 3 | 0045: fixed dist timing, neighbor update, strict improvement, and processed-boundary off-by-one | ↑ |
+| Edge-case handling | 3 | 0045: missed n=1, then diagnosed and fixed it from a failing local test | ↑ |
+| Optimization | 4 | 0045: improved accepted runtime from 1986 ms to 43 ms, then replaced heap with FIFO locally | ↑ |
 
 ## Focus next
 
-- **`#weakness:pointer-bookkeeping` — current priority.** 0055 had the correct invariant immediately, but the loop-control variable was not advanced in the first ready version. Drill: trace the changing variables on one provided example before declaring ready.
-- **`#weakness:refactor-regressions`.** The broader pattern is still "design is right in words, code lags by one guard/update." Keep writing the invariant before coding, then check the shipped loop/branch updates against it.
-- **`#weakness:missed-edge-case`.** Still little self-driven adversarial testing; before submitting, write 1-2 boundary cases even when the main idea feels obvious.
+- **`#weakness:pointer-bookkeeping` — current priority.** 0045 had several one-index/update-target slips after the invariant was verbalized; trace the exact variable being updated before submitting.
+- **`#weakness:complexity-analysis`.** When a solution passes but is slow, identify the repeated unit of work; here it was overlapping range scans, not just heap overhead.
+- **`#weakness:missed-edge-case`.** Keep adding one boundary test before judge submit; n=1 was caught locally only after review added it.
