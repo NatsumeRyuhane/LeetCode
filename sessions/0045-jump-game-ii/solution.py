@@ -3,6 +3,9 @@ from typing import List
 
 class Solution:
     def jump(self, nums: list[int]) -> int:
+        if len(nums) == 1:
+            return 0
+
         least_jumps = [float("inf")] * len(nums)
         heap: List[tuple[int, int]]  = [(0, 0)]
 
@@ -17,7 +20,9 @@ class Solution:
                 if i == len(nums)-1:
                     return jumps+1
                 else:
-                    heapq.heappush(heap, (jumps+1, i))
+                    if jumps+1 < least_jumps[i]:
+                        least_jumps[i] = jumps+1
+                        heapq.heappush(heap, (jumps+1, i))
 
         # should be unreachable catch-all
         return -1
