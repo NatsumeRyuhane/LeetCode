@@ -1,5 +1,5 @@
-import heapq
 from typing import List
+from collections import deque
 
 class Solution:
     def jump(self, nums: list[int]) -> int:
@@ -7,11 +7,12 @@ class Solution:
             return 0
 
         least_jumps = [float("inf")] * len(nums)
-        heap: List[tuple[int, int]]  = [(0, 0)]
+        queue: deque[tuple[int, int]]  = deque()
+        queue.append((0, 0))
         processed = 0
 
-        while len(heap) != 0:
-            jumps, index = heapq.heappop(heap)
+        while len(queue) != 0:
+            jumps, index = queue.popleft()
             if jumps > least_jumps[index]:
                 # a stale entry. skip
                 continue
@@ -23,7 +24,7 @@ class Solution:
                 else:
                     if jumps+1 < least_jumps[i]:
                         least_jumps[i] = jumps+1
-                        heapq.heappush(heap, (jumps+1, i))
+                        queue.append((jumps+1, i))
 
                 processed = i
 
