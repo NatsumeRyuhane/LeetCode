@@ -15,6 +15,7 @@ class Solution:
         queue_next: deque[Coordinate] = deque()
 
         queue_next.append((0, 0))
+        self.HP_cost_grid[0][0] = self.get_value(grid, (0, 0))
 
         for h in range(current_HP_cost, health):
             queue = queue_next.copy()
@@ -40,12 +41,14 @@ class Solution:
                     if self.get_value(self.HP_cost_grid, n) != -1:
                         continue
 
+                    nx, ny = n
                     if self.get_value(grid, n) == 0:
-                        if n not in queue:
-                            queue.append(n)
+                        self.HP_cost_grid[ny][nx] = h
+                        queue.append(n)
                     else:
-                        if n not in queue_next:
-                            queue_next.append(n)
+                        self.HP_cost_grid[ny][nx] = h+1
+                        queue_next.append(n)
+
             
         return False
 
