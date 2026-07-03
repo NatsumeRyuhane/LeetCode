@@ -1,5 +1,6 @@
 from typing import List
 import heapq
+from collections import deque 
 
 class Solution:
     def findMaxPathScore(self, edges: List[List[int]], online: List[bool], k: int) -> int:
@@ -8,17 +9,21 @@ class Solution:
         self.nodes = len(online)
     
         self.edges: dict[int, List[tuple[int, int]]] = {}
+        self.reverse_edges: dict[int, List[tuple[int, int]]] = {}
         costs = set()
         for i in range(0, self.nodes):
             self.edges[i] = []
+            self.reverse_edges[i] = []
 
         for src, dist, c in edges:
             if online[dist]:
                 self.edges[src].append((dist, c))
+                self.reverse_edges[dist].append((src, dist))
                 costs.add(c)
 
 
         costs = sorted(list(costs))
+        self.orderList = self.getTopologicalNodeOrderList()
 
         if self.dijkstraForMinmalAcceptableCost(0) > k:
             # fail fast
@@ -36,29 +41,66 @@ class Solution:
         
         return costs[l]
     
+    def getTopologicalNodeOrderList(self) -> List[int]:
+        # outdegree calc is basically free because of self.edges[nodeid] exists
+        outdegrees: dict[int, int] = {}
+        queue: deque[int] = deque()
+        order: deque[int] = deque()
+        for k, l in self.edges.items():
+            odeg = len(l)
+            outdegrees[k] = odeg
+            if odeg == 0:
+                queue.append(k)
+                order.appendleft(k)
+
+        while len(queue) != 0:
+            v = queue.popleft()
+
+            for src, cost in self.reverse_edges[v]:
+                outdegrees[src] -= 1
+                if outdegrees[src] == 0:
+                    queue.append(src)
+                    order.appendleft(src)
+
+        return list(order)
+    
+    # def dijkstraForMinmalAcceptableCost(self, minimalCost: int) -> int | float:
+    #     dist: List[int|float] = [float("inf")] * self.nodes
+    #     dist[0] = 0
+    #     candidates: List[tuple[int, int]] = [(-0, 0)]
+
+    #     while len(candidates) != 0:
+    #         cost, node = heapq.heappop(candidates)
+
+    #         if cost < minimalCost and node != 0:
+    #             # not traversable
+    #             continue
+
+    #         if cost > dist[node]:
+    #             # stale
+    #             continue
+
+    #         if node == self.nodes - 1:
+    #             return cost
+
+    #         for distN, costN in self.getNeighbour(node, minimalCost):
+    #             if cost + costN < dist[distN]:
+    #                 dist[distN] = cost + costN
+    #                 heapq.heappush(candidates, ((cost+costN), distN))
+
+    #     return float("inf")
+
     def dijkstraForMinmalAcceptableCost(self, minimalCost: int) -> int | float:
-        dist: List[int|float] = [float("inf")] * self.nodes
+        dist: List[int | float] = [float("inf")] * self.nodes
         dist[0] = 0
-        candidates: List[tuple[int, int]] = [(-0, 0)]
 
-        while len(candidates) != 0:
-            cost, node = heapq.heappop(candidates)
-
-            if cost < minimalCost and node != 0:
-                # not traversable
-                continue
-
-            if cost > dist[node]:
-                # stale
-                continue
-
+        for node in self.orderList:
             if node == self.nodes - 1:
-                return cost
+                return dist[node]
 
             for distN, costN in self.getNeighbour(node, minimalCost):
-                if cost + costN < dist[distN]:
-                    dist[distN] = cost + costN
-                    heapq.heappush(candidates, ((cost+costN), distN))
+                if dist[node] + costN < dist[distN]:
+                    dist[distN] = dist[node] + costN
 
         return float("inf")
 
