@@ -1,5 +1,4 @@
 from typing import List
-import heapq
 from collections import deque 
 
 class Solution:
@@ -63,32 +62,6 @@ class Solution:
                     order.appendleft(src)
 
         return list(order)
-    
-    # def dijkstraForMinmalAcceptableCost(self, minimalCost: int) -> int | float:
-    #     dist: List[int|float] = [float("inf")] * self.nodes
-    #     dist[0] = 0
-    #     candidates: List[tuple[int, int]] = [(-0, 0)]
-
-    #     while len(candidates) != 0:
-    #         cost, node = heapq.heappop(candidates)
-
-    #         if cost < minimalCost and node != 0:
-    #             # not traversable
-    #             continue
-
-    #         if cost > dist[node]:
-    #             # stale
-    #             continue
-
-    #         if node == self.nodes - 1:
-    #             return cost
-
-    #         for distN, costN in self.getNeighbour(node, minimalCost):
-    #             if cost + costN < dist[distN]:
-    #                 dist[distN] = cost + costN
-    #                 heapq.heappush(candidates, ((cost+costN), distN))
-
-    #     return float("inf")
 
     def dijkstraForMinmalAcceptableCost(self, minimalCost: int) -> int | float:
         dist: List[int | float] = [float("inf")] * self.nodes
