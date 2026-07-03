@@ -3,19 +3,21 @@ import heapq
 
 class Solution:
     def findMaxPathScore(self, edges: List[List[int]], online: List[bool], k: int) -> int:
+        self.online = online
+        self.k = k
+        self.nodes = len(online)
+    
         self.edges: dict[int, List[tuple[int, int]]] = {}
         costs = set()
-        for src, dist, c in edges:
-            if src not in self.edges.keys():
-                self.edges[src] = []
+        for i in range(0, self.nodes):
+            self.edges[i] = []
 
+        for src, dist, c in edges:
             if online[dist]:
                 self.edges[src].append((dist, c))
                 costs.add(c)
 
-        self.online = online
-        self.k = k
-        self.nodes = len(online)
+
         costs = sorted(list(costs))
 
         if self.dijkstraForMinmalAcceptableCost(0) > k:
