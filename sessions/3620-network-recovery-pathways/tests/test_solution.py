@@ -13,3 +13,20 @@ def test_example_2():
     online = [True, True, True, False, True]
     k = 12
     assert Solution().findMaxPathScore(edges, online, k) == 6
+
+
+def test_no_edges():
+    # n = 2, no edges at all: no path from 0 to n-1 exists.
+    edges = []
+    online = [True, True]
+    k = 73
+    assert Solution().findMaxPathScore(edges, online, k) == -1
+
+
+def test_dead_end_intermediate():
+    # Only edge is 0->1; target is node 2, which is unreachable.
+    # Node 1 gets reached but is a dead end (no outgoing edges).
+    edges = [[0, 1, 5]]
+    online = [True, True, True]
+    k = 100
+    assert Solution().findMaxPathScore(edges, online, k) == -1

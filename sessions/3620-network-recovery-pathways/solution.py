@@ -41,7 +41,6 @@ class Solution:
 
         while len(candidates) != 0:
             cost, node = heapq.heappop(candidates)
-            cost *= -1
 
             if cost < minimalCost and node != 0:
                 # not traversable
@@ -57,7 +56,7 @@ class Solution:
             for distN, costN in self.getNeighbour(node, minimalCost):
                 if cost + costN < dist[distN]:
                     dist[distN] = cost + costN
-                    heapq.heappush(candidates, (-1 * (cost+costN), distN))
+                    heapq.heappush(candidates, ((cost+costN), distN))
 
         return float("inf")
 
