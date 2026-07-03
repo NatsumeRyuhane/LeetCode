@@ -12,15 +12,15 @@ Trend: ↑ / → / ↓ over the last few assessments (`coachdb.py trend --dimens
 
 | Dimension | Level | Latest evidence (one line) | Trend |
 |---|---|---|---|
-| Decomposition | 5 | 0045: restated forward-only movement, minimum jumps, and guaranteed reachability accurately | ↑ |
-| Pattern recognition | 4 | 0045: moved from DP/heap to BFS/FIFO ordering after light prompting | → |
-| Complexity analysis | 3 | 0045: found repeated range scans after prompt; needed L2 for the contiguous processed boundary | ↓ |
-| Implementation correctness | 3 | 0045: fixed dist timing, neighbor update, strict improvement, and processed-boundary off-by-one | ↑ |
-| Edge-case handling | 3 | 0045: missed n=1, then diagnosed and fixed it from a failing local test | ↑ |
-| Optimization | 4 | 0045: improved accepted runtime from 1986 ms to 43 ms, then replaced heap with FIFO locally | ↑ |
+| Decomposition | 4 | 3620: clean two-part split + offline pruning, but misread k as a per-edge cap; fixed in one probe | ↓ |
+| Pattern recognition | 4 | 3620: reframed to binary-search-on-answer off one L1 probe; re-derived Kahn's topo sort from scratch | → |
+| Complexity analysis | 3 | 3620: mis-costed Dijkstra as V·E, feared TLE; recomputed after an L0 nudge; strong asymptotic-vs-wallclock reasoning | → |
+| Implementation correctness | 3 | 3620: shipped an inverted (negated) heap, caught via L2 trace; but Kahn topo sort + linear DP correct first try | ↑ |
+| Edge-case handling | 3 | 3620: missed unconnected/empty-graph node → judge WA (KeyError); diagnosed instantly once shown | → |
+| Optimization | 4 | 3620: reached O((V+E) log m) topo-DP (topo sort named at L3), re-derived Kahn unaided | → |
 
 ## Focus next
 
-- **`#weakness:pointer-bookkeeping` — current priority.** 0045 had several one-index/update-target slips after the invariant was verbalized; trace the exact variable being updated before submitting.
-- **`#weakness:complexity-analysis`.** When a solution passes but is slow, identify the repeated unit of work; here it was overlapping range scans, not just heap overhead.
-- **`#weakness:missed-edge-case`.** Keep adding one boundary test before judge submit; n=1 was caught locally only after review added it.
+- **`#weakness:complexity-analysis` — still the top recurring gap.** 3620 repeated the pattern: mis-costed a *standard* algorithm (Dijkstra as V·E) and nearly abandoned a correct plan over it. Derive the textbook bound of any named algorithm *before* declaring it too slow.
+- **`#weakness:missed-edge-case`.** Third session lost to an unanticipated degenerate input (here: disconnected / empty graph → judge WA; cf. n=1 on 0045, endpoint-thief on 2812). Add one degenerate-input test (empty / singleton / disconnected) to the local set *before* every judge submit.
+- **Consolidate the graph toolkit (`#technique:dijkstra`, `#technique:topological-sort`).** Both were rediscovered live this session, not recalled — Dijkstra internals and Kahn's were re-derived from zero. Drill them until they're recall, so the thinking time goes to the problem, not the tool.

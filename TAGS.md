@@ -26,6 +26,8 @@ trailer or a `log.md` entry, so tags never fork into synonyms. Three namespaces.
 - `#technique:multi-source-bfs` — BFS seeded from many sources at once (distance-to-nearest field)
 - `#technique:0-1-bfs` — shortest path with only 0/1 edge weights; deque-based (push 0-cost to front, 1-cost to back) or round/bucket ordering, in place of a full Dijkstra heap
 - `#technique:dfs` — depth-first search / recursion
+- `#technique:dijkstra` — non-negative-weight shortest path via a min-heap frontier (settle-on-pop)
+- `#technique:topological-sort` — linearize a DAG (Kahn's peel-degree-0 / DFS postorder) so every edge points forward; enables one-pass DP over the order
 - `#technique:prefix-sum` — cumulative aggregates
 - `#technique:sorting` — sort as a preprocessing step
 - `#design` — object/system design (LRU cache, iterators, etc.)
