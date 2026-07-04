@@ -1,35 +1,53 @@
 from collections import deque
-from typing import List
+from typing import List,TypeAlias
+
 
 class Solution:
     def minScore(self, n: int, roads: List[List[int]]) -> int:
-        roads_dict: dict[int, List[tuple[int, int]]] = {}
-        for src, dst, c in roads:
-            if not src in roads_dict.keys():
-                roads_dict[src] = []
+        nodes: dict[int, tuple[int, int, int]] = {}
+        for src, dst, cost in roads:
+            if self.isConnected(nodes, src, dst):
+                root = self.getRootID(nodes, src)
+                root, depth, min_cost = nodes[root]
+                if min_cost > cost:
+                    nodes[root] = (root, depth, cost)
+            else:
+                self.merge(nodes, src, dst)
 
-            if not dst in roads_dict.keys():
-                roads_dict[dst] = []
+        return nodes[self.getRootID(nodes, 1)][2]
 
-            roads_dict[src].append((dst, c))
+    def isConnected(self, nodes: dict[int, tuple[int, int, int]], A: int, B: int) -> bool:
+        root_A = self.getRootID(nodes, A)
+        root_B = self.getRootID(nodes, B)
 
-            if not src == dst:
-                roads_dict[dst].append((src, c))
-            
-        queue: deque[int] = deque()
-        discovered: set[int] = set()
-        minCost: int = 999999
-        queue.append(1)
-
-        while len(queue) != 0:
-            node = queue.popleft()
-
-            for neighbor, cost in roads_dict[node]:
-                if neighbor not in discovered:
-                    discovered.add(neighbor)
-                    queue.append(neighbor)
-
-                minCost = min(cost, minCost)
+        if root_A == root_B:
+            return True
+        else:
+            return False
         
-        return minCost
-                
+    def merge(self, nodes: dict[int, tuple[int, int, int]], A: int, B: int) -> None:
+        root_A = self.getRootID(nodes, A)
+        root_B = self.getRootID(nodes, B)
+
+        root_A, depth_A, min_cost_A = nodes[root_A]
+        root_B, depth_B, min_cost_B = nodes[root_B]
+
+        if depth_A >= depth_B:
+            nodes[root_A] = (root_A, max(depth_A, depth_B+1), min(min_cost_A, min_cost_B))
+            nodes[root_B] = (root_A, depth_B, min_cost_B)
+        else:
+            nodes[root_A] = (root_B, depth_A, min_cost_A)
+            nodes[root_B] = (root_B, max(depth_A+1, depth_B), min(min_cost_A, min_cost_B))
+
+
+    def getRootID(self, nodes: dict[int, tuple[int, int, int]], n: int) -> int:
+        if n not in nodes.keys():
+            return n
+        
+        cn: int = n
+        while True:
+            root, depth, min_cost = nodes[cn]
+            if root != cn:
+                cn = root
+            else:
+                return cn
