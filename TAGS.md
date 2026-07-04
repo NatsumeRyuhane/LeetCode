@@ -41,3 +41,4 @@ trailer or a `log.md` entry, so tags never fork into synonyms. Three namespaces.
 - `#weakness:pattern-recognition` — doesn't map the problem to a known technique
 - `#weakness:refactor-regressions` — drops a guard/seed/invariant when restructuring working code
 - `#weakness:bfs-mechanics` — BFS/DFS confusion, per-cell vs shared distance, visited timing
+- `#weakness:misread-statement` — codes against a different spec than stated (indexing base, directedness, parameter semantics)
