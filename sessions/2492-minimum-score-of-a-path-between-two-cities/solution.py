@@ -8,12 +8,18 @@ class Solution:
             if not src in roads_dict.keys():
                 roads_dict[src] = []
 
+            if not dst in roads_dict.keys():
+                roads_dict[dst] = []
+
             roads_dict[src].append((dst, c))
+
+            if not src == dst:
+                roads_dict[dst].append((src, c))
             
         queue: deque[int] = deque()
         discovered: set[int] = set()
         minCost: int = 999999
-        queue.append(0)
+        queue.append(1)
 
         while len(queue) != 0:
             node = queue.popleft()
