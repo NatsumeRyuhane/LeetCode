@@ -17,9 +17,9 @@ class Solution:
                 char_count[j] -= 2
 
         if len(s) % 2 == 0:
-            ans += str(reversed(ans))
+            ans = ans + ans[::-1]
         else:
-            ans = ans + central + str(reversed(ans))
+            ans = ans + central + ans[::-1]
 
         return ans
 
