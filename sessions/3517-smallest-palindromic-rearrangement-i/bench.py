@@ -65,6 +65,27 @@ def run_timing(repeat: int) -> None:
         print("  ".join(row))
 
 
+def run_scaling(repeat: int) -> None:
+    """Double n repeatedly and print the ratio between successive timings.
+
+    Read the RATIO column, not the milliseconds: ~2x per doubling means linear,
+    ~4x per doubling means quadratic. This distinguishes 'slow' from 'wrong order
+    of growth' without any reasoning about the code.
+    """
+    sol = Solution()
+    for v in VARIANTS:
+        fn = getattr(sol, v)
+        print(f"\n===== {v} =====")
+        print(f"{'n':>9}  {'time':>10}  {'ratio':>6}")
+        prev = None
+        for n in (12_500, 25_000, 50_000, 100_000, 200_000):
+            s = make_palindrome(n)
+            best = min(timeit.repeat(lambda: fn(s), number=1, repeat=repeat))
+            ratio = f"{best / prev:5.2f}x" if prev else "    --"
+            print(f"{n:>9}  {best * 1000:8.2f}ms  {ratio:>6}")
+            prev = best
+
+
 def run_profile() -> None:
     sol = Solution()
     s = make_palindrome(100_000)
@@ -81,6 +102,12 @@ def run_profile() -> None:
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--profile", action="store_true", help="call counts per function")
+    ap.add_argument("--scale", action="store_true", help="growth curve: ratio per doubling of n")
     ap.add_argument("--repeat", type=int, default=5)
     args = ap.parse_args()
-    run_profile() if args.profile else run_timing(args.repeat)
+    if args.profile:
+        run_profile()
+    elif args.scale:
+        run_scaling(args.repeat)
+    else:
+        run_timing(args.repeat)
