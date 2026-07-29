@@ -8,7 +8,6 @@ class Solution:
             char_count[self.get_relative_ord(s[i])] += 2
 
         if len(s) % 2 != 0:
-            char_count[self.get_relative_ord(s[len(s)//2])] -= 2
             central = s[len(s)//2]
 
         for j in range(0, 26):
