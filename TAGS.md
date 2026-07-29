@@ -28,6 +28,7 @@ trailer or a `log.md` entry, so tags never fork into synonyms. Three namespaces.
 - `#technique:dfs` — depth-first search / recursion
 - `#technique:dijkstra` — non-negative-weight shortest path via a min-heap frontier (settle-on-pop)
 - `#technique:topological-sort` — linearize a DAG (Kahn's peel-degree-0 / DFS postorder) so every edge points forward; enables one-pass DP over the order
+- `#technique:frequency-count` — tally symbols into a fixed-size bucket array / Counter, then read the buckets in order (counting-sort family)
 - `#technique:prefix-sum` — cumulative aggregates
 - `#technique:sorting` — sort as a preprocessing step
 - `#design` — object/system design (LRU cache, iterators, etc.)
@@ -42,3 +43,5 @@ trailer or a `log.md` entry, so tags never fork into synonyms. Three namespaces.
 - `#weakness:refactor-regressions` — drops a guard/seed/invariant when restructuring working code
 - `#weakness:bfs-mechanics` — BFS/DFS confusion, per-cell vs shared distance, visited timing
 - `#weakness:misread-statement` — codes against a different spec than stated (indexing base, directedness, parameter semantics)
+- `#weakness:language-mechanics` — misuses Python semantics rather than algorithmics: builtin return types, immutability, in-place vs copy, what `+=` actually does
+- `#weakness:unverified-assumption` — asserts runtime behaviour (a trace result, a hotspot, a cost) from reasoning alone when a print/profile/measurement would settle it in seconds
