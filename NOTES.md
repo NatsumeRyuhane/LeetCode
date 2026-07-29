@@ -12,15 +12,15 @@ Trend: ↑ / → / ↓ over the last few assessments (`coachdb.py trend --dimens
 
 | Dimension | Level | Latest evidence (one line) | Trend |
 | --- | --- | --- | --- |
-| Decomposition | 4 | 2492: clean restatement + both-direction proof (achievability & contradiction) of the reduction on one prompt | → |
-| Pattern recognition | 5 | 2492: reduced to component-min unaided at first read; self-generated and self-named disjoint-set | ↑ |
-| Complexity analysis | 4 | 2492: self-derived Ω(E) floor, costed relabeling via merge-sort analogy, read 12ms judge delta as constants — but stated O(V+E) only when pressed | ↑ |
-| Implementation correctness | 3 | 2492: five bugs across two impls (directed-only adjacency, start at 0, missing init, dropped merge cost); each diagnosed fast from one failing trace | → |
-| Edge-case handling | 2 | 2492: skipped the pre-submit degenerate test again, misjudging what the 1–n guarantee excludes | ↓ |
-| Optimization | 4 | 2492: floor argument *before* optimizing; honest constants-vs-asymptotics verdict; chose toolkit drill over percentile | → |
+| Decomposition | 4 | 3517: derived pair-counts and the unique odd centre from the palindromicity guarantee unaided, before any hint | → |
+| Pattern recognition | 4 | 3517: proposed the correct count-then-emit-and-mirror method at approach stage with zero hints | → |
+| Complexity analysis | 4 | 3517: Ω(n) floor argued from *both* obligations (read the multiset, write n chars) — but never re-derived after editing, and shipped a self-introduced O(n²) | → |
+| Implementation correctness | 2 | 3517: three defects — `str(reversed(x))` repr leak, a stale `-= 2` left behind after moving the scan bound, then a "fix" that renamed variables instead of changing the operation | ↓ |
+| Edge-case handling | 2 | 3517: fifth straight session with no self-written test past the provided examples; coach supplied all three edge cases before submit | → |
+| Optimization | 2 | 3517: both bottleneck hypotheses overturned by the profiler, attempted fix ran 4× slower, tapped out to L4 | ↓ |
 
 ## Focus next
 
-- **`#weakness:missed-edge-case` — the pre-submit habit still isn't firing.** Fourth session in a row: this time the degenerate test was waved off as unnecessary because "1–n connectivity is guaranteed" — the guarantee excludes exactly one shape, not all of them. The rule stands: one degenerate-input test (empty / singleton / disconnected / extreme value) written *before* every judge submit, no exceptions, especially when it feels unnecessary.
-- **`#weakness:misread-statement` (new tag).** Two spec slips in one session — directed-only adjacency for a bidirectional graph, BFS from node 0 in a 1-indexed problem (minutes after indexing was flagged) — following 3620's k-semantics misread. Before coding: restate indexing base, directedness, and value ranges as a three-line comment at the top of `solution.py`.
-- **Union-find: finish the toolkit entry.** The structure was hand-derived this session (rank rule included) — consolidate it. Next union-find problem: re-derive path compression ("repair during the walk"), check whether rank stays exact under it, and cut the 4-finds-per-edge pattern to 2 by fusing the connected-check into the union.
+- **`#weakness:unverified-assumption` (new tag) — measure, don't assert.** Three overturned guesses in one session: a hand-trace claiming counts the code never produced; "the culprit is my string construction" (not a hotspot at all); "unwrapping the helpers won't matter" (they were 65 % of cumulative time). Every one was settled in seconds by a `print` or a profile that wasn't run. **The rule: when a claim is about what the machine does — a value, a hotspot, a cost — the trace is the suspect and the measurement is the authority.** `sessions/3517-*/bench.py` is reusable scaffolding for the perf half of this (`--profile` for call counts, `--scale` for the growth curve).
+- **`#weakness:missed-edge-case` — five sessions, habit still not firing.** No longer a lapse, it's a hole in the workflow: the coach has written the pre-submit edge cases every time. Next session, before *any* judge submit, write one degenerate-input test yourself (empty / singleton / all-identical / the value the guarantee seems to rule out) — and on 3517 the one that mattered was `"bbabb"`, where the smallest letter is pinned to the centre and cannot be pulled forward.
+- **`#weakness:language-mechanics` (new tag) — Python semantics, not algorithmics.** `str(reversed(x))` returning a repr, believing a `str` could be reused as a mutable buffer, and treating `+=` as intrinsically fast rather than as a CPython refcount-1 tail-resize special case. Consolidate the one transferable rule from the 3517 reveal: **a Python-level loop over n items is ~10× an equivalent C-level builtin, at identical big-O** — reach for `Counter` / `str.count` / `sorted` / `join` / `c * k` / slicing before writing the loop.
