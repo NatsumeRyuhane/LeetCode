@@ -31,6 +31,7 @@ trailer or a `log.md` entry, so tags never fork into synonyms. Three namespaces.
 - `#technique:frequency-count` — tally symbols into a fixed-size bucket array / Counter, then read the buckets in order (counting-sort family)
 - `#technique:prefix-sum` — cumulative aggregates
 - `#technique:sorting` — sort as a preprocessing step
+- `#technique:closed-form` — collapse the iteration into direct arithmetic derived from the constraints (counting / pigeonhole), turning an O(n) scan into O(1)
 - `#design` — object/system design (LRU cache, iterators, etc.)
 
 ## `#weakness:*` — recurring stumbles to target (grows as they surface)

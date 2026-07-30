@@ -16,3 +16,6 @@ def test_all_letters():
 
 def test_9_letters():
     assert Solution().minimumPushes("abcdefghi") == 10
+
+def test_1():
+    assert Solution().minimumPushes("a") == 1
