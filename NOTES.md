@@ -12,15 +12,32 @@ Trend: ↑ / → / ↓ over the last few assessments (`coachdb.py trend --dimens
 
 | Dimension | Level | Latest evidence (one line) | Trend |
 | --- | --- | --- | --- |
-| Decomposition | 4 | 3517: derived pair-counts and the unique odd centre from the palindromicity guarantee unaided, before any hint | → |
-| Pattern recognition | 4 | 3517: proposed the correct count-then-emit-and-mirror method at approach stage with zero hints | → |
-| Complexity analysis | 4 | 3517: Ω(n) floor argued from *both* obligations (read the multiset, write n chars) — but never re-derived after editing, and shipped a self-introduced O(n²) | → |
-| Implementation correctness | 2 | 3517: three defects — `str(reversed(x))` repr leak, a stale `-= 2` left behind after moving the scan bound, then a "fix" that renamed variables instead of changing the operation | ↓ |
-| Edge-case handling | 2 | 3517: fifth straight session with no self-written test past the provided examples; coach supplied all three edge cases before submit | → |
-| Optimization | 2 | 3517: both bottleneck hypotheses overturned by the profiler, attempted fix ran 4× slower, tapped out to L4 | ↓ |
+| Decomposition | 4 | 3014: keypad mechanics restated correctly, but modelled the *general* problem — the "all letters distinct" constraint went unregistered until quoted back | → |
+| Pattern recognition | 4 | 3014: named Huffman/frequency-greedy for the general shape, then re-mapped to pigeonhole + tiered closed form the moment the constraint landed | → |
+| Complexity analysis | 4 | 3014: O(n)/O(1) then O(1) both stated unprompted and both correct; kept `Counter()` filed as a constant-factor, not a big-O, change | → |
+| Implementation correctness | 4 | 3014: four tiered branches with three accumulated bases (8/24/48) — the flagged boundary surface — zero defects, accepted first submit | ↑ |
+| Edge-case handling | 3 | 3014: first self-written pre-submit tests in six sessions (26→56, 9→10), correct by hand; singleton `"a"` still missing after being named | ↑ |
+| Optimization | 2 | 3517: both bottleneck hypotheses overturned by the profiler, attempted fix ran 4× slower, tapped out to L4 *(not exercised since)* | ↓ |
 
 ## Focus next
 
-- **`#weakness:unverified-assumption` (new tag) — measure, don't assert.** Three overturned guesses in one session: a hand-trace claiming counts the code never produced; "the culprit is my string construction" (not a hotspot at all); "unwrapping the helpers won't matter" (they were 65 % of cumulative time). Every one was settled in seconds by a `print` or a profile that wasn't run. **The rule: when a claim is about what the machine does — a value, a hotspot, a cost — the trace is the suspect and the measurement is the authority.** `sessions/3517-*/bench.py` is reusable scaffolding for the perf half of this (`--profile` for call counts, `--scale` for the growth curve).
-- **`#weakness:missed-edge-case` — five sessions, habit still not firing.** No longer a lapse, it's a hole in the workflow: the coach has written the pre-submit edge cases every time. Next session, before *any* judge submit, write one degenerate-input test yourself (empty / singleton / all-identical / the value the guarantee seems to rule out) — and on 3517 the one that mattered was `"bbabb"`, where the smallest letter is pinned to the centre and cannot be pulled forward.
-- **`#weakness:language-mechanics` (new tag) — Python semantics, not algorithmics.** `str(reversed(x))` returning a repr, believing a `str` could be reused as a mutable buffer, and treating `+=` as intrinsically fast rather than as a CPython refcount-1 tail-resize special case. Consolidate the one transferable rule from the 3517 reveal: **a Python-level loop over n items is ~10× an equivalent C-level builtin, at identical big-O** — reach for `Counter` / `str.count` / `sorted` / `join` / `c * k` / slicing before writing the loop.
+- **`#weakness:misread-statement` — sweep the constraints *before* choosing a model.** Twice
+  now a complete, correct-for-something-else plan was built on a skimmed constraint: 3620 read
+  `k` as a per-edge cap, 3014 missed `All letters are distinct` and solved the harder variant.
+  Both were corrected in one step once pointed at, so the fix isn't comprehension — it's
+  sequencing. **The rule: after restating the problem, walk the constraints list line by line
+  and say out loud what each one *buys* you.** A constraint that buys nothing is usually one
+  that was misread.
+- **`#weakness:missed-edge-case` — the habit fired; now finish it.** Six sessions flagged, five
+  of them with the coach writing every pre-submit test, and on 3014 the tests appeared unaided
+  before the ready signal, well-chosen and hand-verified. Keep that. The remaining half-step is
+  *coverage*, not existence: 3014 covered the top boundary and a tier crossing but not the
+  singleton — the smallest legal input is its own category, and it was named out loud and still
+  skipped. Boundary **and** degenerate, every time.
+- **Next problem: 3016 · Minimum Number of Pushes to Type Word II.** The frequency model
+  discarded on 3014 is not wrong, it's early — 3016 drops the distinctness guarantee and
+  sort-by-frequency-then-assign-tiers *is* its answer, so the reasoning already done gets
+  cashed in. It also re-opens the two threads 3014 couldn't test: at `n ≤ 10⁵` the
+  Python-loop-vs-C-builtin gap (`#weakness:language-mechanics`) becomes measurable, and any
+  claim about where the time goes should be settled with `sessions/3517-*/bench.py` rather than
+  asserted (`#weakness:unverified-assumption`).
