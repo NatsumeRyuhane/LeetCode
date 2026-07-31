@@ -71,4 +71,24 @@ class Solution:
 
 ## User's restatement
 
-_(filled in during UNDERSTANDING-CHECK)_
+> okay the problem is that we can remap the letter input to 8 buttons (namely 2 to 9 on a
+> keypad) and in combination of presses. Our goal is to find a mapping so that entering a
+> given word takes as few pushes as possible. Each letter can only corresponding to one key,
+> so no two buttons can contain the same letter, no matter the pushes.
+>
+> The problem states clearly that the letter may repeat, the word can never be an empty
+> string, and the word is only consisted of lowercase english letters.
+>
+> My appaorch is that we would assign the high-frequency letters to fewer pushes. Like what
+> we do in huffman code. We know we have 8 1-push slots, 8 2-push slots, etc. So we only need
+> to keep a count of letter freq., and actually we dont care about the exact mapping, we just
+> need the frequency itself, the frequrncy can be stored in a fixed size list of int[26]. We
+> can use its ascii code as the index tio that list, and sort it reversed. Doing so is O(1) -
+> size of the list is fixed. The calculation goes for each non-zero frequency, so it is also
+> O(1), capped at 26 calc. The storage needed is also O(1) because we only need that fixed
+> size list.
+
+**Coach note (UNDERSTANDING-CHECK).** Restatement accurate on every mechanic: 8 keys, each
+letter to exactly one key, position within a key determines push count. Constraint sweep
+caught the *absent* distinctness guarantee unprompted — the 3014 lesson firing. Gap: the
+`1 <= word.length <= 10^5` line was not swept, and the total cost was called O(1).
