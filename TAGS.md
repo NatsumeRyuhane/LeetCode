@@ -32,6 +32,8 @@ trailer or a `log.md` entry, so tags never fork into synonyms. Three namespaces.
 - `#technique:prefix-sum` — cumulative aggregates
 - `#technique:sorting` — sort as a preprocessing step
 - `#technique:closed-form` — collapse the iteration into direct arithmetic derived from the constraints (counting / pigeonhole), turning an O(n) scan into O(1)
+- `#technique:exchange-argument` — prove a greedy optimal by showing any assignment containing an inversion can be improved by swapping the inverted pair, so no optimal solution has one
+- `#technique:lower-bound-argument` — establish a floor before optimising (must-read / must-write / adversary: if the algorithm skips input i, choose input i to change the answer)
 - `#design` — object/system design (LRU cache, iterators, etc.)
 
 ## `#weakness:*` — recurring stumbles to target (grows as they surface)

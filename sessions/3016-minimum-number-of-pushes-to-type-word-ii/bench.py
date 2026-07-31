@@ -26,7 +26,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from solution import Solution
 
 # Methods on Solution to benchmark. Add your rewrites here as you write them.
-VARIANTS = ["minimumPushes"]
+VARIANTS = ["minimumPushes", "minimumPushes_v2", "minimumPushes_v3", "minimumPushes_v4"]
 
 
 def make_word(n: int, alphabet: int = 26, seed: int = 0) -> str:
