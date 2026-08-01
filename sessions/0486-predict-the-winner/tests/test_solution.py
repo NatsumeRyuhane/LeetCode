@@ -9,3 +9,6 @@ def test_example_1():
 
 def test_example_2():
     assert Solution().predictTheWinner([1, 5, 233, 7]) == True
+
+def test_only_1_elem():
+    assert Solution().predictTheWinner([1]) == True

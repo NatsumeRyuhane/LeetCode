@@ -51,4 +51,17 @@ class Solution:
 
 ## User's restatement
 
-_(filled in during UNDERSTANDING-CHECK)_
+> So basically we have a 2 player game that take turns to play. P1 go first. Each turn,
+> a player may take a number at either end of `nums` and remove it from the list. The
+> taken number is accumulated to their score. The game ends when numbers are exhausted,
+> and the score is compared to determine who wins. Ties counts as player 1 win.
+>
+> We are tasked to predict the winner if the two player is played optimally. If P1 may
+> win, return true, false otherwise.
+>
+> If the two player is playing optimally, then we need to aviod greedy at each step and
+> plan ahead. Consider following example: 1 2 999 3, P1 may not take 3 at T1 as it expose
+> 999 to be pickable by P2@T2, instead he only take 1 and force P2 to expose it for them.
+> I remember there is an algoritm called alpha-beta pruning that is designed to deal with
+> game that takes turns, it is basically an algorithm that prunes the state trees, but I
+> forgot how it works.
