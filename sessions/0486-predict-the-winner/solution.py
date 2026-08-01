@@ -14,6 +14,7 @@ class Solution:
                 return state_values[s]
             else:
                 v = recurse(s)
+                state_values[s] = v
                 return v
 
 
@@ -21,7 +22,7 @@ class Solution:
             player_control, seg_start, seg_end = s
 
             if seg_start == seg_end:
-                return player_control * seg_start
+                return player_control * nums[seg_start]
 
             def take_number_at_start():
                 return player_control * nums[seg_start] + get_state_value((-1*player_control, seg_start+1, seg_end))

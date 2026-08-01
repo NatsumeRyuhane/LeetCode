@@ -20,6 +20,8 @@ trailer or a `log.md` entry, so tags never fork into synonyms. Three namespaces.
 - `#technique:binary-search` — search a sorted space
 - `#technique:binary-search-on-answer` — binary search the answer value, not the array
 - `#technique:dp` — dynamic programming / memoization
+- `#technique:interval-dp` — state is a contiguous segment `(i, j)` of the input rather than a prefix; applicable when the only legal mutations are at the segment's ends, which is what keeps the surviving set contiguous and collapses `2^n` subsets to `O(n^2)` intervals
+- `#technique:minimax` — adversarial two-player search: alternating levels maximise and minimise the same quantity. Made history-independent by scoring the *differential* (my points minus theirs) instead of absolute scores, so a node's value depends only on the position, not the path that reached it
 - `#technique:greedy` — locally optimal choice
 - `#technique:backtracking` — build/prune candidate solutions
 - `#technique:bfs` — breadth-first search
@@ -48,3 +50,6 @@ trailer or a `log.md` entry, so tags never fork into synonyms. Three namespaces.
 - `#weakness:misread-statement` — codes against a different spec than stated (indexing base, directedness, parameter semantics)
 - `#weakness:language-mechanics` — misuses Python semantics rather than algorithmics: builtin return types, immutability, in-place vs copy, what `+=` actually does
 - `#weakness:unverified-assumption` — asserts runtime behaviour (a trace result, a hotspot, a cost) from reasoning alone when a print/profile/measurement would settle it in seconds
+- `#weakness:unevaluated-expression` — derives the correct *form* of a quantity and then reports a number that isn't its value: states the formula and substitutes a guess, an asymptotic class, or a mis-scaled figure instead of evaluating it
+- `#weakness:index-vs-value` — uses an index where the element it addresses was meant (`a[i]` written as `i`), typically in a base case or accumulator that the surrounding code otherwise dereferences correctly
+- `#weakness:trace-intent-not-code` — hand-simulates the algorithm as designed rather than the lines as written, so self-review reproduces the intent and structurally cannot find transcription bugs; the fix is to instrument and diff, not to re-simulate
