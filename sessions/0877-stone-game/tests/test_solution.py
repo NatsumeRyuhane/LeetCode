@@ -32,3 +32,18 @@ def test_is_alice_just_cant_lose_randomize():
         board[random.randint(0, piles)] -= 1
 
         assert Solution().stoneGame(board) == Solution().stoneGame2(board)
+
+
+# Added by the coach during REVIEW. A legal input at the constraint ceiling
+# (n = 500, values in 1..500, even count, odd total). Expected value derived
+# independently, not from your solution.
+def test_constraint_ceiling():
+    board = [(i * 37) % 500 + 1 for i in range(500)]
+    if sum(board) % 2 == 0:
+        board[-1] += 1
+
+    assert len(board) == 500 and len(board) % 2 == 0
+    assert sum(board) % 2 == 1
+    assert 1 <= min(board) and max(board) <= 500
+
+    assert Solution().stoneGame(board) == True
