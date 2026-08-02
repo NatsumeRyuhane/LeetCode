@@ -12,35 +12,35 @@ Trend: ↑ / → / ↓ over the last few assessments (`coachdb.py trend --dimens
 
 | Dimension | Level | Latest evidence (one line) | Trend |
 | --- | --- | --- | --- |
-| Decomposition | 5 | 0486: first session with *zero* comprehension corrections — tie rule caught unprompted, greedy disproved with a self-built counterexample, constraints triaged (value range irrelevant, length load-bearing) | ↑ |
-| Pattern recognition | 5 | 0486: score-differential representation derived unaided from a pure L0; interval state from a second L0 that was literally "read your own leaf row again" — and articulated *why* contiguity collapses `2ⁿ` to `n²` | ↑ |
-| Complexity analysis | 3 | 0486: every asymptotic right and unprompted, but the arithmetic took four asks and came back wrong — `1+2+…+19` (=190) reported as "about 400" | ↓ |
-| Implementation correctness | 3 | 0486: two defects after two clean sessions — base case returned the index not the value; memo never written (that one found unaided) | ↓ |
-| Edge-case handling | 2 | 0486: one self-written test (`[1]`), and it passed for the wrong reason; both discriminating cases came from the coach at L2 | ↓ |
-| Optimization | 4 | 0486: self-found the dead memo write, derived the parity redundancy from one L1, refused the 13.12% percentile bait, then declined the rewrite on *stated, measured* grounds | ↑ |
+| Decomposition | 5 | 0877: second zero-correction restatement running; classified the problem as a strict specialization of 0486 and successfully defended that against the coach's overstatement | → |
+| Pattern recognition | 5 | 0877: conjectured the constant-answer collapse unprompted off their own failing test, then built the entire forcing proof from L0/L1 refocus — no technique was ever named | → |
+| Complexity analysis | 3 | 0877: asymptotics right and unprompted; `2^500` reported as `10^130`, then `10^133` from a division never performed, corrected only on a second push | → |
+| Implementation correctness | 4 | 0877: ported DP correct first run, zero defects; diagnosed the `RecursionError` mechanism exactly and unaided — three stack frames per level of descent, not one | ↑ |
+| Edge-case handling | 2 | 0877: randomised oracle reached for unaided at last, but the generator built all-identical boards, indexed out of range, ran 9 samples — and was reported as "all pass" on a run that crashed | → |
+| Optimization | 4 | 0877: collapsed a 250k-state DP to O(1) and reached the bound unaided — but shipped it to the judge on nine broken samples, with the justifying proof arriving afterward | → |
 
 ## Focus next
 
-- **`#weakness:unevaluated-expression` — the new one, and it fired five times in one session.**
-  Distinct from `#weakness:unverified-assumption`: that one is asserting runtime behaviour without
-  measuring; **this one is having the number already in hand and not computing it.** Every instance
-  had correct structure and a skipped evaluation — `O(2ⁿ)` called "unacceptable" uncomputed;
-  `7 = 2³-1` offered in place of `2²⁰`; `10E6` written for `1.05e6`; "affordable" with no budget
-  named; `1+2+…+19` reported as "about 400". **The rule: when you write an expression that decides
-  something, evaluate it in the same breath.** Knowing an expression's *form* is not knowing its
-  *value*, and the gap is where the 2× and 10× errors live.
-- **`#weakness:trace-intent-not-code` — your self-review has a structural blind spot.** Asked to
-  hand-trace a program that was provably returning the wrong answer, you traced the algorithm you
-  designed and concluded it was correct. You cannot re-simulate your way out of this: the
-  substitution you make on paper is the same one you made writing the line. **The move that worked,
-  and that generalises: stop simulating, print `state -> value`, and find the *first divergent row* —
-  not the wrong final answer.** Eight minutes from redirect to exact diagnosis.
-- **Test coverage regressed — and the tool you needed was already in your own notes.** Five unaided
-  tests on 3016 became one here, and it passed by coincidence. The randomised oracle check that
-  finds this class of bug in seconds was run by the coach, not you — third session running it has
-  been on this list. You had no excuse this time: you designed the exponential brute force *first*,
-  so the oracle was already written in your head. **Next session, before you say "ready": seed an
-  RNG, generate random inputs, diff your solution against your own brute force.**
+- **`#weakness:unaudited-instrument` — you now measure, but you don't inspect the meter.**
+  Three sessions of "run the randomised check" finally landed, and the *instinct* is real.
+  What didn't land: `[v] * n` builds one repeated value, `randint(0, piles)` is out of range,
+  and nine samples is a rounding error — and "comes back all pass" was reported for a run
+  that raised `IndexError` before finishing. **The rule: before you trust a generator, print
+  ten of the things it generates and read them.** A green harness that tests one degenerate
+  corner is worse than no harness, because it buys confidence you haven't earned.
+- **`#weakness:conjecture-as-proof` — the judge said yes and it proved nothing.**
+  You submitted `return True` as a knowing gamble, it was accepted, and you still could not
+  say why it was correct. That was the right call to *chase down* afterward and you did — the
+  proof you built is genuinely yours. But note the shape of the trap: an accepted submission
+  is evidence about a test set, never about a claim. **When a conjecture survives testing,
+  the next question is "what forces this?", not "can I submit it?"**
+- **`#weakness:unevaluated-expression` — third session, and the counter-argument is noted.**
+  `2^500` → "10^130" → "10^133" (from `500/3`, never divided) → 167 only on a second push.
+  You argued the precision was irrelevant to the conclusion, and for that decision you were
+  right. The part that still stands: you could not tell whether you were off by a factor of 2
+  or 10^37 until you did the division. **When an expression decides something, evaluate it in
+  the same breath** — and when it decides nothing, say so out loud instead of publishing a
+  number you haven't computed.
 
 <!-- Coach reminder: do NOT name a technique for an upcoming problem here. Doing so at the
      end of the 3014 debrief contaminated 3016's pattern-recognition score. Point at a

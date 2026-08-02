@@ -34,6 +34,7 @@ trailer or a `log.md` entry, so tags never fork into synonyms. Three namespaces.
 - `#technique:prefix-sum` — cumulative aggregates
 - `#technique:sorting` — sort as a preprocessing step
 - `#technique:closed-form` — collapse the iteration into direct arithmetic derived from the constraints (counting / pigeonhole), turning an O(n) scan into O(1)
+- `#technique:parity-argument` — 2-colour the positions by index parity and show the structure of the moves forces each side into one colour class; converts an adversarial search into a comparison of two fixed sums. The family: prove a *strategy* exists rather than searching for one
 - `#technique:exchange-argument` — prove a greedy optimal by showing any assignment containing an inversion can be improved by swapping the inverted pair, so no optimal solution has one
 - `#technique:lower-bound-argument` — establish a floor before optimising (must-read / must-write / adversary: if the algorithm skips input i, choose input i to change the answer)
 - `#design` — object/system design (LRU cache, iterators, etc.)
@@ -53,3 +54,5 @@ trailer or a `log.md` entry, so tags never fork into synonyms. Three namespaces.
 - `#weakness:unevaluated-expression` — derives the correct *form* of a quantity and then reports a number that isn't its value: states the formula and substitutes a guess, an asymptotic class, or a mis-scaled figure instead of evaluating it
 - `#weakness:index-vs-value` — uses an index where the element it addresses was meant (`a[i]` written as `i`), typically in a base case or accumulator that the surrounding code otherwise dereferences correctly
 - `#weakness:trace-intent-not-code` — hand-simulates the algorithm as designed rather than the lines as written, so self-review reproduces the intent and structurally cannot find transcription bugs; the fix is to instrument and diff, not to re-simulate
+- `#weakness:unaudited-instrument` — reports a measurement or test result without checking what the harness actually produced or whether it ran to completion; the inverse of `#weakness:unverified-assumption` — the measurement was taken, the *instrument* wasn't inspected
+- `#weakness:conjecture-as-proof` — treats failure-to-refute over a small or unrepresentative sample as an established fact and ships on it, without an argument for *why* it holds
