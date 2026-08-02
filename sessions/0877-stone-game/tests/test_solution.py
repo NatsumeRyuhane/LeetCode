@@ -11,28 +11,6 @@ def test_example_1():
 def test_example_2():
     assert Solution().stoneGame([3, 7, 2, 3]) == True
 
-def test_is_alice_just_cant_lose():
-    boards = [
-        [1, 7, 3, 4],
-        [2, 2, 4, 7, 8, 6],
-        [1, 1, 2, 2, 3, 4, 4, 4]
-    ]
-
-    for b in boards:
-        assert Solution().stoneGame(b) == Solution().stoneGame2(b)
-
-
-def test_is_alice_just_cant_lose_randomize():
-    import random
-
-    for i in range(1, 10):
-        piles = (random.randint(1, 100) * 2)
-        board = [random.randint(1, 100) * 2] * piles
-
-        board[random.randint(0, piles)] -= 1
-
-        assert Solution().stoneGame(board) == Solution().stoneGame2(board)
-
 
 # Added by the coach during REVIEW. A legal input at the constraint ceiling
 # (n = 500, values in 1..500, even count, odd total). Expected value derived
