@@ -55,4 +55,21 @@ class Solution:
 
 ## User's restatement
 
-{filled in during UNDERSTANDING-CHECK}
+> So this game is... quite similar to 0486 yesterday. There are even number of piles of
+> stones which sums to a odd number of totaling stones in a row, and player take turns to
+> take one pile of stone from either start or end to the row. Alice always starts. The goal
+> is to take as much stone at end of the game, so who gets more stone wins and game never
+> ties.
+>
+> Okay, the general structure of the game is unchanged from 0486, so the last solution
+> should work in here. Let's take a look at the constraints:
+>
+> 2 <= piles.length <= 500
+>
+> so as we have proved, by using memorized search and i dont know if that can be called
+> state compression - we can make the algorithm takes a O(n²) TC to compute. This complexity
+> is acceptable for n = 500. Same for SC. I think the constraint here is to filter out the
+> unoptimized solution of the problem, because 2^500 translate to roughly 10^130, which will
+> blow everything up.
+>
+> My conclusion is I can just reuse my solution here with the existing test suite. Should work.
