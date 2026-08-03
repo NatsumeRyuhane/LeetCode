@@ -3,30 +3,31 @@
 - **Source:** https://leetcode.cn/problems/stone-game-iii/description/?envType=daily-question&envId=2026-08-03
 - **Difficulty:** Hard
 
-> Note: leetcode.cn is JS-rendered and leetcode.com returned 403, so the statement below is
-> reconstructed by the coach. Correct me if anything differs from what's on your screen —
-> especially the constraints.
+> Fetched verbatim from the leetcode.cn GraphQL endpoint (`questionData` by `titleSlug`) —
+> the rendered page blocks scraping, the API does not.
 
 ## Statement
 
-Alice 和 Bob 用几堆石子在做游戏。几堆石子 **排成一行**，每堆石子都对应一个得分，由数组
+Alice 和 Bob 继续他们的石子游戏。几堆石子 **排成一行** ，每堆石子都对应一个得分，由数组
 `stoneValue` 给出。
 
 Alice 和 Bob 轮流取石子，**Alice 总是先开始**。在每个玩家的回合中，该玩家可以拿走剩下石子中的
-**前 1、2 或 3 堆** 石子。比赛一直持续到所有石头都被拿走。
+**前 1、2 或 3 堆石子**。比赛一直持续到所有石头都被拿走。
 
-每个玩家的最终得分为他所拿到的每堆石子的对应得分之和。每个玩家的初始分数都是 `0`。比赛的目标是
-决出最高分，获胜者得分最高。
+每个玩家的最终得分为他所拿到的每堆石子的对应得分之和。每个玩家的初始分数都是 `0` 。
 
-Alice 和 Bob 都是聪明人，他们都采用最优策略。如果 Alice 赢了就返回 `"Alice"`，Bob 赢了就返回
-`"Bob"`，平局（分数相同）返回 `"Tie"`。
+比赛的目标是决出最高分，得分最高的选手将会赢得比赛，比赛也可能会出现平局。
+
+假设 Alice 和 Bob 都采取 **最优策略** 。
+
+如果 Alice 赢了就返回 `"Alice"` ，Bob 赢了就返回 `"Bob"`，分数相同返回 `"Tie"` 。
 
 ### 示例 1
 
 ```
 输入：values = [1,2,3,7]
 输出："Bob"
-解释：Alice 总是会输，她的最优选择是拿走前三堆，得分变成 6 。这时 Bob 的得分为 7 ，Bob 获胜。
+解释：Alice 总是会输，她的最佳选择是拿走前三堆，得分变成 6 。但是 Bob 的得分为 7，Bob 获胜。
 ```
 
 ### 示例 2
@@ -34,12 +35,12 @@ Alice 和 Bob 都是聪明人，他们都采用最优策略。如果 Alice 赢�
 ```
 输入：values = [1,2,3,-9]
 输出："Alice"
-解释：Alice 要想获胜就必须在第一回合拿走前三堆石子，给 Bob 留下负分。
-如果 Alice 只拿走第一堆，那么她的得分为 1，下一回合 Bob 的得分为 5 。
-下一回合 Alice 只有 -9 可拿，输掉比赛。
-如果 Alice 拿走前两堆，那么她的得分为 3，下一回合 Bob 的得分为 3 。
-下一回合 Alice 只有 -9 可拿，同样输掉比赛。
-注意，Alice 和 Bob 都会采取最优策略。
+解释：Alice 要想获胜就必须在第一个回合拿走前三堆石子，给 Bob 留下负分。
+如果 Alice 只拿走第一堆，那么她的得分为 1，接下来 Bob 拿走第二、三堆，得分为 5 。
+之后 Alice 只能拿到分数 -9 的石子堆，输掉比赛。
+如果 Alice 拿走前两堆，那么她的得分为 3，接下来 Bob 拿走第三堆，得分为 3 。
+之后 Alice 只能拿到分数 -9 的石子堆，同样会输掉比赛。
+注意，他们都应该采取 最优策略 ，所以在这里 Alice 将选择能够使她获胜的方案。
 ```
 
 ### 示例 3
@@ -47,7 +48,7 @@ Alice 和 Bob 都是聪明人，他们都采用最优策略。如果 Alice 赢�
 ```
 输入：values = [1,2,3,6]
 输出："Tie"
-解释：Alice 无法赢得比赛。如果她选择拿走前三堆，游戏以平局结束；否则她会输。
+解释：Alice 无法赢得比赛。如果她决定选择前三堆，她可以以平局结束比赛，否则她就会输。
 ```
 
 ### 提示（Constraints）
