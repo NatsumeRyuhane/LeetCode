@@ -33,6 +33,9 @@ trailer or a `log.md` entry, so tags never fork into synonyms. Three namespaces.
 - `#technique:frequency-count` — tally symbols into a fixed-size bucket array / Counter, then read the buckets in order (counting-sort family)
 - `#technique:prefix-sum` — cumulative aggregates
 - `#technique:sorting` — sort as a preprocessing step
+- `#technique:linear-dp` — state is a single prefix/suffix index with bounded look-ahead, so the table is 1-D; iterate in dependency order (usually backwards) and every child is already resolved on arrival, which removes the memo dict, the hashing, and the re-entry machinery entirely
+- `#technique:explicit-stack` — hand-rolled call stack replacing recursion when the descent depth exceeds the interpreter's frame limit; correct but costly, since a state gets re-pulled once per not-yet-resolved child before it finally resolves
+- `#technique:zero-sum-symmetry` — in a zero-sum game the value of a position to *whoever is about to move* does not depend on which player that is, so the two per-player entries for one position are one number stored twice with opposite signs; halves the state space
 - `#technique:closed-form` — collapse the iteration into direct arithmetic derived from the constraints (counting / pigeonhole), turning an O(n) scan into O(1)
 - `#technique:parity-argument` — 2-colour the positions by index parity and show the structure of the moves forces each side into one colour class; converts an adversarial search into a comparison of two fixed sums. The family: prove a *strategy* exists rather than searching for one
 - `#technique:exchange-argument` — prove a greedy optimal by showing any assignment containing an inversion can be improved by swapping the inverted pair, so no optimal solution has one
@@ -56,3 +59,5 @@ trailer or a `log.md` entry, so tags never fork into synonyms. Three namespaces.
 - `#weakness:trace-intent-not-code` — hand-simulates the algorithm as designed rather than the lines as written, so self-review reproduces the intent and structurally cannot find transcription bugs; the fix is to instrument and diff, not to re-simulate
 - `#weakness:unaudited-instrument` — reports a measurement or test result without checking what the harness actually produced or whether it ran to completion; the inverse of `#weakness:unverified-assumption` — the measurement was taken, the *instrument* wasn't inspected
 - `#weakness:conjecture-as-proof` — treats failure-to-refute over a small or unrepresentative sample as an established fact and ships on it, without an argument for *why* it holds
+- `#weakness:cross-problem-constants` — carries a previously solved problem's constraint figures into the current one and reasons from them, after having read the correct constraints earlier in the same session
+- `#weakness:wrong-proposition` — proves a claim adjacent to the one required and treats the required one as established: arguing a lower bound from the behaviour of one particular algorithm, or concluding two stored values are independent from the fact that they differ
