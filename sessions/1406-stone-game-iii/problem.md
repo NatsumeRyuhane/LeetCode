@@ -65,4 +65,24 @@ class Solution:
 
 ## User's restatement
 
-{filled in during UNDERSTANDING-CHECK}
+> so this tile we still have a bunch of stones arranged in a row (a list). each stone will
+> have its associated value. This time, a player can take the first 1, 2 or 3 stones at the
+> front of the rows. They cannot do nothing and pass, nor take more than 3 piles. We are
+> asked, if Alice go first, and both party play optimally, will the game end in Alice (wins),
+> Bob or Ties.
+>
+> Constraints indicate there can be at most 50k stones to take and the value of the stone can
+> be negative, ranging in -1000 to 1000. Note that we dont need to tell exactly how the score
+> differentiates, just who wins, this maybe relavant (exploitable) or useless.
+>
+> So the solution idea from 0486 should work with modification. The general structure is still
+> that player takes turns and minmaxing - so the relative score structure should be useable
+> here. The general DP+DFS state tree search should also work, but the branching factor is now
+> 3 instead of 2.
+>
+> Complexity wise, now the state is composed of (player_control, ptr_stone). So we should only
+> have 10⁵ states at most, which should be acceptable.
+>
+> 0877 exploited a garuantee from the constraint so Alice always wins, but here we don't have
+> a strong exploit here we could use yet, so I think I will try to port and modify 0486 again
+> to test the idea out.
