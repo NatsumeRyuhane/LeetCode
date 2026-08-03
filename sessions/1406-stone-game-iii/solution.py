@@ -78,8 +78,6 @@ class Solution:
             elif player_control == -1:
                 state_values[s] = min(t for t in options if t is not None)
 
-            print(f"State: {s}, value = {state_values[s]}")
-
             stack.popleft()
 
         vis = state_values[initial_state]
