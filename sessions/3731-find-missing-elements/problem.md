@@ -56,4 +56,20 @@ class Solution:
 
 ## User's restatement
 
-_(filled in during UNDERSTANDING-CHECK)_
+> we are given a list of elements that range from 2 to 100 elements, and each element
+> is in [1, 100]. The list contains the number in a range with unspecified elements
+> missing.
+>
+> My initial idea is that if we sort the list first, then do a linear scan with a
+> sliding window, it should be obvious what elements are missing. If the two elements
+> are continous in a sorted array, the sliding window perform diff = window[1] -
+> window[0] = 1. For any diff > 1, we know the missing elements are window[0]+1 to
+> window[0]+diff, right exclusive.
+>
+> Sorting such array takes O(n lg n) via builtins. The sliding window takes O(n). If we
+> make a micro-optimization to idetify the gaps via several passes of binary search, it
+> chould be optimized to O(lg n), but not worth it with n is capped at 100.
+>
+> So overall TC is O(n lg n), SC is depending on the sorting algorithm, I forgot the
+> lower bound but it should be Omega(1) if you use algorthm like QS. And sliding window
+> dont really commit something to memory so SC should be O(1).
