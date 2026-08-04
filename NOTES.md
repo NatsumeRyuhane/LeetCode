@@ -12,36 +12,37 @@ Trend: ↑ / → / ↓ over the last few assessments (`coachdb.py trend --dimens
 
 | Dimension | Level | Latest evidence (one line) | Trend |
 | --- | --- | --- | --- |
-| Decomposition | 5 | 1406: third consecutive zero-correction restatement, and refuted the coach's misstatement of the terminal rule with a correct counterexample pulled from example 2 | → |
-| Pattern recognition | 4 | 1406: mapped to 0486's minimax, sized the state space and branching unaided at first contact — but carried 0486's memo shape onto a single-index state, and the 1-D form needed an experiment plus three redirects | ↓ |
-| Complexity analysis | 2 | 1406: reasoned from 0877's constants after stating 1406's correctly at intake; "3-branching tree, so O(n³)" with 3^d never written; then 10⁵ states × O(1) reported as "O(1) work" | ↓ |
-| Implementation correctness | 4 | 1406: hand-rolled explicit-stack memoization with four re-entry paths, correct on the first run — 0/3000 vs oracle, accepted 185/185 first submit; dead condition and 4× redundant recomputation left in | → |
-| Edge-case handling | 3 | 1406: four small-n cases written pre-ready with every expectation correct by hand, and the 50k generator's value range right unaided — the exact bug shipped on 0877 | ↑ |
-| Optimization | 3 | 1406: found the state redundancy from their own print table and derived the whole rewrite, but on L0+4×L1 after defending the redundancy with a "they differ, therefore they're independent" argument | ↓ |
+| Decomposition | 4 | 3731: length and value constraints restated with zero corrections, but both load-bearing guarantees — uniqueness, min/max still present — went unstated and had to be supplied | ↓ |
+| Pattern recognition | 3 | 3731: sort-then-adjacent-scan proposed instantly and unaided at first contact; the value-domain alternative took L1/L1/L2 and only after the sort had been defended as unavoidable | ↓ |
+| Complexity analysis | 3 | 3731: retracted their own O(lg n) claim unprompted, produced the exact output size `(max-min+1)-n` unaided, and repaired `m ≈ n/2` → `≈ n` by checking an instance — then answered a request for two expressions with "gut feelings" | ↑ |
+| Implementation correctness | 4 | 3731: both versions correct on the first run, accepted first submit, and the `!=` termination defended with a real loop invariant rather than a rationalization | → |
+| Edge-case handling | 4 | 3731: three self-authored tests before the ready signal, every expectation correct by hand, and could name which stated guarantee each shortcut depends on | ↑ |
+| Optimization | 3 | 3731: built the entire O(n+R) alternative from one `range()` counterexample, attacked their own draft over list-vs-set lookup cost, and **implemented** it this time — then asserted a trade-off that does not exist | → |
 
 ## Focus next
 
-- **`#weakness:cross-problem-constants` — you reasoned from yesterday's problem's numbers.**
-  "At most 1000 states, stack depth capped at 500." Those are 0877's figures. 1406's `n` is
-  5×10⁴, and **you had said so correctly at intake**, before writing a line — then recalled the
-  wrong ones an hour later and built a complexity claim on them. The risk lives precisely where
-  you're strongest right now: same family, consecutive days, high fluency. **When you state a
-  bound, re-read the constraint line first — don't recall it.** Recall is what substituted 500
-  for 50,000.
-- **`#weakness:wrong-proposition` — new, and it fired twice in one session.** You argued a lower
-  bound *for all algorithms* by describing what *your* algorithm does. Then you showed two stored
-  values **differ** and concluded they were **independent** — they were exact negations of each
-  other. Both times the sentence you proved sat next to the sentence you needed. This is 0877's
-  `conjecture-as-proof` with a different failure mode: there the argument was missing, here it
-  was present and aimed one target to the left. **Before accepting your own argument, write down
-  the claim you need and check that the argument concludes *that* sentence.**
-- **`#weakness:unevaluated-expression` — fourth consecutive session, and now it costs conclusions,
-  not just precision.** "3-branching tree, so O(n³)" — the phrase was never turned into an
-  expression, and 3^d is not n³. Then "10⁵ states × O(1) each, so the algorithm is already doing
-  O(1) work" — the multiplication was right in your head and wrong on the page, and O(1) vs O(n)
-  is the difference between reading your input and not. The 0877 note said *evaluate it in the
-  same breath*; the 1406 version is stricter: **write the expression down before you name its
-  class.**
+- **`#weakness:wrong-proposition` — three times in one session, and it is now the pattern, not a
+  slip.** Asked whether *any* algorithm could hit O(lg n), you analysed *yours*. Asked for the
+  output size, you gave the gap count — twice, including on `[1,100]`, where those numbers are 1 and
+  98. Asked whether the sort was avoidable, you argued "the answer must be sorted, therefore sorting
+  is unavoidable" — a property of the output used as a constraint on the input handling. Each
+  argument was individually **correct**; none concluded the sentence on the table. That's what makes
+  it hard to catch from the inside: nothing feels wrong, because nothing *is* wrong except the aim.
+  **Write the target sentence down before you start arguing, and check the argument lands on it.**
+- **`#weakness:unevaluated-expression` — fifth consecutive session, and this time it ended the
+  session rather than delaying it.** You were asked for two totals as expressions and for the
+  relationship between `n` and `R`; you returned "switching point is about R ≈ n//2. Gut feelings"
+  — your own label, and accurate. Had you written it: `n ≤ R` is forced (n distinct values inside a
+  width-`R` interval), so `R ≈ n/2` is an impossible region, and `O(n+R)` beats `O(n lg n + R)`
+  *everywhere* — there is no crossover to locate. Four sessions of notes have said evaluate it;
+  the sharper version now is **when you catch yourself saying "roughly" or "gut feeling" about a
+  quantity you were asked to derive, that is the moment to stop and write the line.**
+- **Decomposition — the guarantees you skip at intake are the ones your code ends up standing on.**
+  You omitted "unique" and "min and max are still present." By the end of the session your loop
+  terminated on `comp != diff` (correct *only* under uniqueness) and your entire range derivation
+  rested on the endpoints being present. Both were load-bearing within the hour. **Read the
+  guarantee lines out loud with the constraint lines** — they are not background colour, they are
+  the preconditions your code will silently assume.
 
 <!-- Coach reminder: do NOT name a technique for an upcoming problem here. Doing so at the
      end of the 3014 debrief contaminated 3016's pattern-recognition score. Point at a
