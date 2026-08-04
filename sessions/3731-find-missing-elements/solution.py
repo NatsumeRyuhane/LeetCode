@@ -3,16 +3,21 @@ from typing import List
 
 class Solution:
     def findMissingElements(self, nums: List[int]) -> List[int]:
-        nums = sorted(nums)
+        sn: set[int] = set()
+        maxn = -1
+        minn = 101
+
+        for n in nums:
+            sn.add(n)
+            if n > maxn:
+                maxn = n
+
+            if n < minn:
+                minn = n
+
         ans = []
-
-        for j in range(1, len(nums)):
-            i = j - 1
-
-            diff = nums[j] - nums[i]
-            comp = 1
-            while (comp != diff):
-                ans.append(nums[i]+comp)
-                comp += 1
+        for j in range(minn, maxn): # didnt need to step on max anyway, max is a seen number so wont be in ans
+            if j not in sn:
+                ans.append(j)
 
         return ans
