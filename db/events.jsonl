@@ -246,3 +246,4 @@
 {"ts": "2026-08-03T15:06:39+08:00", "session": "1406-stone-game-iii@2026-08-03", "problem": "1406-stone-game-iii", "type": "user-turn", "state": "OPTIMIZATION-LOOP", "note": "recognized own solution as 1D DP with machinery attached; same O(n)", "gap_s": 290}
 {"ts": "2026-08-03T15:07:45+08:00", "session": "1406-stone-game-iii@2026-08-03", "problem": "1406-stone-game-iii", "type": "user-turn", "state": "DEBRIEF", "note": "user tapped out of optimization loop after deriving the rewrite but before implementing", "gap_s": 66}
 {"ts": "2026-08-03T15:07:45+08:00", "session": "1406-stone-game-iii@2026-08-03", "problem": "1406-stone-game-iii", "type": "state-change", "state": "DEBRIEF", "gap_s": 0}
+{"ts": "2026-08-04T16:13:55+08:00", "session": "3731-find-missing-elements@2026-08-04", "problem": "3731-find-missing-elements", "type": "user-turn", "state": "INTAKE"}
