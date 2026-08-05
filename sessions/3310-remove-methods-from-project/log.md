@@ -35,11 +35,20 @@ pre-fix version was *also* accepted — the judge's data never contains the adve
 
 **Where they got stuck.**
 
-1. *Direction, three times.* Inverted `[a, b]` at intake against explicit statement text; gave a
-   justification for example 1 blocking ("the removed methods *depends on* clean methods") that
-   does not block anything even on its own terms; then stated the blocking pattern as `[clean,
-   dirty]` and, ten minutes later, as `[dirty, clean]`. Unblocked by an L0 that quoted their two
-   contradictory formulas side by side without saying which was right — resolved in 66s.
+1. *Direction — one imported premise, three symptoms.* (Framing amended after the user challenged
+   the original "three direction slips", which wrongly implied three independent errors.) The root
+   is a premise the statement never makes, stated at intake: *"if b is suspicious, a will be
+   contaiminated and become suspicous too"* — contamination flowing callee → caller. It is a
+   reasonable model of how bugs really spread and it is not this problem's definition. When it
+   collided with example 1, the premise was kept and the *input format* was revised to fit it
+   (`[a, b]` reread as `b() { ... a() ... }`). Symptoms: the inverted format; a justification for
+   example 1 blocking ("the removed methods *depends on* clean methods") that blocks nothing even
+   on its own terms; and the blocking pattern stated as `[clean, dirty]` and then, ten minutes
+   later, as `[dirty, clean]` — that second form returns `[0,3]` on example 1 against an expected
+   `[0,1,2,3]`. Unblocked by an L0 that quoted their two contradictory formulas side by side
+   without saying which was right — resolved in 66s. The statement is self-consistent throughout:
+   example 1's own explanation ("1 and 2 are directly invoked by 3 and 0") matches edges `0→1` and
+   `3→2` exactly under "a invokes b".
 2. *Complexity, the long wall.* Claimed `O(n²)` by bounding one adjacency list at `n` and
    multiplying by `n`. Told explicitly *"don't bound it — count it,"* they swapped the bound for
    `m` and multiplied again → `O(mn)`. Only an L2 concrete instance (build `dict_source` for
