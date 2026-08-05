@@ -109,3 +109,32 @@ so the outcome is not affected.
 stripped only in the LeetCode editor. The open questions are unchanged: does `d_dst` earn its build
 cost, what is the per-edge operation count of the build loop with and without it, and what is a
 `dict` buying you over dense integer indices.
+
+### Addendum, same day — the two unevaluated beliefs, now measured
+
+The user asked post-debrief which constant factors were costing them. Coach benchmarked at full
+constraint size (`n = 10^5`, `m = 2·10^5`, best of 5). The recoverable cost is concentrated almost
+entirely in the adjacency build pass:
+
+| Build variant | Time |
+| --- | --- |
+| `defaultdict(set)`, both directions (shipped) | 80.5 ms |
+| `defaultdict(set)`, forward only | 39.4 ms |
+| `defaultdict(list)`, forward only | 25.4 ms |
+| `list`-of-lists, forward only | 19.4 ms |
+
+Verdicts on the two assertions left standing at tap-out:
+
+- *"d_dst builiding is cheap because we are building d_src anyway"* — **refuted.** 41.1 ms of
+  80.5 ms; building the reverse index is the single most expensive operation in the solution,
+  costing more than the BFS and the final scan combined. Shared loop overhead, unshared work.
+- *"it did not make too much difference"* (set → list) — **understated but second-order.** 14.0 ms,
+  a 1.55x on the pass; real, but a third of what `d_dst` costs.
+- The untouched `dict` → dense-list question: 6.0 ms, smallest of the three.
+
+Negative results worth keeping: `x in set` 5.8 ms vs `bytearray[x]` 5.5 ms over 200k lookups, and
+`a, b = i[0], i[1]` 5.3 ms vs tuple-unpacking 4.0 ms over 200k edges. Neither is worth changing —
+the "use a bytearray for visited" folklore does not apply at this loop's arithmetic density.
+
+Assessment levels unchanged: the measurement was the coach's, taken after the tap-out at the user's
+request, so it does not alter the optimization row.
