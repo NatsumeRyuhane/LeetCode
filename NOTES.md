@@ -12,37 +12,37 @@ Trend: ↑ / → / ↓ over the last few assessments (`coachdb.py trend --dimens
 
 | Dimension | Level | Latest evidence (one line) | Trend |
 | --- | --- | --- | --- |
-| Decomposition | 4 | 3731: length and value constraints restated with zero corrections, but both load-bearing guarantees — uniqueness, min/max still present — went unstated and had to be supplied | ↓ |
-| Pattern recognition | 3 | 3731: sort-then-adjacent-scan proposed instantly and unaided at first contact; the value-domain alternative took L1/L1/L2 and only after the sort had been defended as unavoidable | ↓ |
-| Complexity analysis | 3 | 3731: retracted their own O(lg n) claim unprompted, produced the exact output size `(max-min+1)-n` unaided, and repaired `m ≈ n/2` → `≈ n` by checking an instance — then answered a request for two expressions with "gut feelings" | ↑ |
-| Implementation correctness | 4 | 3731: both versions correct on the first run, accepted first submit, and the `!=` termination defended with a real loop invariant rather than a rationalization | → |
-| Edge-case handling | 4 | 3731: three self-authored tests before the ready signal, every expectation correct by hand, and could name which stated guarantee each shortcut depends on | ↑ |
-| Optimization | 3 | 3731: built the entire O(n+R) alternative from one `range()` counterexample, attacked their own draft over list-vs-set lookup cost, and **implemented** it this time — then asserted a trade-off that does not exist | → |
+| Decomposition | 3 | 3310: every guarantee line read unprompted — the 3731 gap closed — but `[a, b]` was read as "b invokes a" against text saying the opposite, after first reading it correctly, and `m ≤ 2n` was asserted as structural from two independent caps | ↓ |
+| Pattern recognition | 4 | 3310: imported 2492's union-find and called the structure a tree minutes after noting it has cycles, then dropped it under an L0 that only quoted their own contradiction back — "a set is sufficient"; the frontier expansion and the single edge scan were never named by the coach | ↑ |
+| Complexity analysis | 2 | 3310: `O(n²)` by bounding one adjacency list at `n` and multiplying by `n`; told explicitly "don't bound it, count it," swapped the bound to `m` and multiplied again → `O(mn)`; an L2 hand-count on a 4-edge instance unlocked the charging argument, produced unaided in 125s | ↓ |
+| Implementation correctness | 4 | 3310: 6/6 at the ready signal with three self-authored edge cases; defects during the 13-minute build were all caught and fixed against their own tests with zero coach involvement, and the surviving performance defect was root-caused from their own counters | → |
+| Edge-case handling | 4 | 3310: three tests before the ready signal, every expectation correct by hand, and `remainingMethods(2, 0, [[1,0]]) == [0,1]` is exactly the discriminator for the direction error they had made twice that morning — they built the test that would have caught their own bug | ↑ |
+| Optimization | 3 | 3310: root-caused the mark-at-pop blowup unaided from one failing test (49,014,001 → 21,001 iterations) and found both the `d_dst` elimination and the set-not-used-as-a-set mismatch when asked whether each structure earns its keep; tapped out leaving two unevaluated beliefs standing | → |
 
 ## Focus next
 
-- **`#weakness:wrong-proposition` — three times in one session, and it is now the pattern, not a
-  slip.** Asked whether *any* algorithm could hit O(lg n), you analysed *yours*. Asked for the
-  output size, you gave the gap count — twice, including on `[1,100]`, where those numbers are 1 and
-  98. Asked whether the sort was avoidable, you argued "the answer must be sorted, therefore sorting
-  is unavoidable" — a property of the output used as a constraint on the input handling. Each
-  argument was individually **correct**; none concluded the sentence on the table. That's what makes
-  it hard to catch from the inside: nothing feels wrong, because nothing *is* wrong except the aim.
-  **Write the target sentence down before you start arguing, and check the argument lands on it.**
-- **`#weakness:unevaluated-expression` — fifth consecutive session, and this time it ended the
-  session rather than delaying it.** You were asked for two totals as expressions and for the
-  relationship between `n` and `R`; you returned "switching point is about R ≈ n//2. Gut feelings"
-  — your own label, and accurate. Had you written it: `n ≤ R` is forced (n distinct values inside a
-  width-`R` interval), so `R ≈ n/2` is an impossible region, and `O(n+R)` beats `O(n lg n + R)`
-  *everywhere* — there is no crossover to locate. Four sessions of notes have said evaluate it;
-  the sharper version now is **when you catch yourself saying "roughly" or "gut feeling" about a
-  quantity you were asked to derive, that is the moment to stop and write the line.**
-- **Decomposition — the guarantees you skip at intake are the ones your code ends up standing on.**
-  You omitted "unique" and "min and max are still present." By the end of the session your loop
-  terminated on `comp != diff` (correct *only* under uniqueness) and your entire range derivation
-  rested on the endpoints being present. Both were load-bearing within the hour. **Read the
-  guarantee lines out loud with the constraint lines** — they are not background colour, they are
-  the preconditions your code will silently assume.
+- **`#weakness:unevaluated-expression` — sixth consecutive session, and today it has a name:
+  bound-and-multiply.** Three times you took one part, bounded it (`n`, then `m`), and multiplied
+  by the number of parts. Between the second and third you were told in plain words *"don't bound
+  it — count it"*, and you swapped which bound you used and multiplied again. What finally worked
+  is **yours, and it generalises**: stop asking *"how big can one of these get?"* and ask
+  ***"who put each entry there?"*** Every adjacency entry traces to exactly one edge, so the total
+  is `m` regardless of how lopsided the distribution is. That is a charging argument, and it is the
+  standard escape from this exact trap. Reach for it by default on any "sum over nodes" quantity.
+- **`#weakness:bfs-mechanics` — the identical slip as 3286, five weeks apart.** That session's row
+  reads *"mark-at-discovery shipped a round late."* Today: `dirty.add(node)` at pop time, so a node
+  was enqueued once per in-edge and rescanned on every pop — 49M iterations against `n + m` =
+  35,003, and a legal input would have TLE'd at ~2.5·10⁹. The judge accepted it anyway, which is a
+  fact about their test data, not your code. **Rule: decide membership when you enqueue, not when
+  you dequeue.** Write the mark on the same line as the push.
+- **`#weakness:wrong-instance-check` + `#weakness:unaudited-instrument` — twice today you ran a
+  real check against the wrong thing.** Asked to hand-verify example 1, you walked example 2's edge
+  list and reported "the idea holds" (the edge you dismissed as irrelevant is the one that fires in
+  the real instance). Then you read LeetCode's 816ms-vs-943ms as evidence that removing redundant
+  work made the code *slower* — two bottom-decile runs differing by noise — while ignoring the
+  controlled experiment you had already run yourself, `counter2`. Both times the check was
+  performed; neither time was it performed on the thing in question. **Name the instrument and the
+  instance out loud before you read the result off it.**
 
 <!-- Coach reminder: do NOT name a technique for an upcoming problem here. Doing so at the
      end of the 3014 debrief contaminated 3016's pattern-recognition score. Point at a
