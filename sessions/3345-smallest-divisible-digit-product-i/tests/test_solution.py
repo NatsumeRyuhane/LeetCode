@@ -24,3 +24,11 @@ def test_with_1():
 def test_with_10_mult():
     for n in range(10, 101, 10):
         assert Solution().smallestNumber(n, random.randint(1, 10)) == n
+
+
+def test_single_digit_input():
+    assert Solution().smallestNumber(5, 7) == 7
+
+
+def test_top_of_range():
+    assert Solution().smallestNumber(99, 2) == 100
