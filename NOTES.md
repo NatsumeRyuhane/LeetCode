@@ -12,37 +12,42 @@ Trend: ↑ / → / ↓ over the last few assessments (`coachdb.py trend --dimens
 
 | Dimension | Level | Latest evidence (one line) | Trend |
 | --- | --- | --- | --- |
-| Decomposition | 3 | 3310: every guarantee line read unprompted — the 3731 gap closed — but `[a, b]` was read as "b invokes a" against text saying the opposite, after first reading it correctly, and `m ≤ 2n` was asserted as structural from two independent caps | ↓ |
-| Pattern recognition | 4 | 3310: imported 2492's union-find and called the structure a tree minutes after noting it has cycles, then dropped it under an L0 that only quoted their own contradiction back — "a set is sufficient"; the frontier expansion and the single edge scan were never named by the coach | ↑ |
-| Complexity analysis | 2 | 3310: `O(n²)` by bounding one adjacency list at `n` and multiplying by `n`; told explicitly "don't bound it, count it," swapped the bound to `m` and multiplied again → `O(mn)`; an L2 hand-count on a 4-edge instance unlocked the charging argument, produced unaided in 125s | ↓ |
-| Implementation correctness | 4 | 3310: 6/6 at the ready signal with three self-authored edge cases; defects during the 13-minute build were all caught and fixed against their own tests with zero coach involvement, and the surviving performance defect was root-caused from their own counters | → |
-| Edge-case handling | 4 | 3310: three tests before the ready signal, every expectation correct by hand, and `remainingMethods(2, 0, [[1,0]]) == [0,1]` is exactly the discriminator for the direction error they had made twice that morning — they built the test that would have caught their own bug | ↑ |
-| Optimization | 3 | 3310: root-caused the mark-at-pop blowup unaided from one failing test (49,014,001 → 21,001 iterations) and found both the `d_dst` elimination and the set-not-used-as-a-set mismatch when asked whether each structure earns its keep; tapped out leaving two unevaluated beliefs standing | → |
+| Decomposition | 4 | 3345: restatement with zero corrections including the `n' >= n` inclusivity and both ranges, and the "why can the search stop at 100?" probe answered crisply and unaided — "100 multiplies digits to 0, and 0 is an absorbing element" | ↑ |
+| Pattern recognition | 4 | 3345: built a digit-product table, proposed a closed-form ones-digit snap from it, then killed it themselves off an L0 carrying no new content (`33 → 9` for `t = 9`) and replaced it with a bounded scan they could justify | → |
+| Complexity analysis | 4 | 3345: derived the ≤10-step bound unaided *at approach stage* and used it as the reason to drop the shortcut, then stated O(1)/O(1) from that argument rather than from the judge's 0ms panel sitting on screen — though the bound is near-trivial here and does not test the bound-and-multiply trap | ↑ |
+| Implementation correctness | 3 | 3345: two judge-fatal defects at the ready signal — `i // 10` fabricating a zero factor so every `n < 10` returned `n`, and `range(n, 100)` excluding the one value they had personally proven is the universal fallback; both root-caused and fixed correctly first try in 144s | ↓ |
+| Edge-case handling | 2 | 3345: all three self-authored tests enter the `n%10 == 0 or t == 1` early return and exit — **zero tests reached the loop body**, the only code worth doubting — and both coach tests landed in that gap and failed; partial credit for killing their own bad test by hand-check before running | ↓ |
+| Optimization | 3 | *(not exercised on 3345 — the first correct version was already O(1))* 3310: root-caused the mark-at-pop blowup unaided from one failing test and found both structural redundancies when asked whether each earns its keep; tapped out leaving two unevaluated beliefs standing | → |
 
 ## Focus next
 
-- **`#weakness:unevaluated-expression` — sixth consecutive session, and today it has a name:
-  bound-and-multiply.** Three times you took one part, bounded it (`n`, then `m`), and multiplied
-  by the number of parts. Between the second and third you were told in plain words *"don't bound
-  it — count it"*, and you swapped which bound you used and multiplied again. What finally worked
-  is **yours, and it generalises**: stop asking *"how big can one of these get?"* and ask
-  ***"who put each entry there?"*** Every adjacency entry traces to exactly one edge, so the total
-  is `m` regardless of how lopsided the distribution is. That is a charging argument, and it is the
-  standard escape from this exact trap. Reach for it by default on any "sum over nodes" quantity.
-- **`#weakness:bfs-mechanics` — the identical slip as 3286, five weeks apart.** That session's row
-  reads *"mark-at-discovery shipped a round late."* Today: `dirty.add(node)` at pop time, so a node
-  was enqueued once per in-edge and rescanned on every pop — 49M iterations against `n + m` =
-  35,003, and a legal input would have TLE'd at ~2.5·10⁹. The judge accepted it anyway, which is a
-  fact about their test data, not your code. **Rule: decide membership when you enqueue, not when
-  you dequeue.** Write the mark on the same line as the push.
-- **`#weakness:wrong-instance-check` + `#weakness:unaudited-instrument` — twice today you ran a
-  real check against the wrong thing.** Asked to hand-verify example 1, you walked example 2's edge
-  list and reported "the idea holds" (the edge you dismissed as irrelevant is the one that fires in
-  the real instance). Then you read LeetCode's 816ms-vs-943ms as evidence that removing redundant
-  work made the code *slower* — two bottom-decile runs differing by noise — while ignoring the
-  controlled experiment you had already run yourself, `counter2`. Both times the check was
-  performed; neither time was it performed on the thing in question. **Name the instrument and the
-  instance out loud before you read the result off it.**
+- **`#weakness:confirmatory-testing` — new, and the sharpest finding in six sessions.**
+  Your three tests on 3345 were `test_with_100`, `test_with_1`, `test_with_10_mult`.
+  Map each to the path it enters: **all three hit the same early return and exit.** Not one
+  test reached the loop — the only code in the function you had any reason to doubt. The
+  habit is solid (four sessions running, written pre-ready, expectations hand-checked); what
+  failed is *selection*. You tested the parts you had already proven. **Drill: before declaring
+  ready, list your code's branches and put a test on each one. A branch with no test is the
+  branch that ships broken.** Both defects were there, and both would have been a WA.
+- **`#weakness:off-by-one` — the proven fact that didn't reach the code.** You established at
+  intake that 100 always qualifies, used it to bound the search, used it again to bound the step
+  count — then wrote `range(n, 100)`, excluding it. Your own correction comment names the false
+  inference precisely: the shortcut fires on *`n`* being a multiple of 10, but *the answer* being
+  100 is a different event. **Rule: when a specific value is load-bearing in your argument,
+  check by hand that it is reachable in your code.** Same shape as the 0-absorption bug next to
+  it, where `i // 10` manufactured a zero that is not a digit of `i` at all.
+- **`#weakness:unevaluated-expression` — still open, untested today.** Six sessions running
+  before 3345, and 3345 gave it nothing to bite on: a ≤10-step bound needs no counting argument.
+  The escape route from the last debrief is still the one to reach for on the next problem with
+  a sum-over-structure quantity — stop asking *"how big can one of these get?"* and ask
+  ***"who put each entry there?"*** Consider a medium graph/array problem next to actually test it.
+
+**Closed this session:** `#weakness:unaudited-instrument`. You wrote a fourth test asserting the
+answer is always the next multiple of 10, hand-checked the expectation against the *statement*
+rather than against your code's output, found it false, and deleted it before running the suite.
+That is exactly the audit that was missing twice on 3310, performed unprompted. The judge's
+"0 ms · beats 100%" panel was also right in front of you at debrief and you quoted your bound
+argument instead.
 
 <!-- Coach reminder: do NOT name a technique for an upcoming problem here. Doing so at the
      end of the 3014 debrief contaminated 3016's pattern-recognition score. Point at a
