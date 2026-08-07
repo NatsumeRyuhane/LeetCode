@@ -12,42 +12,47 @@ Trend: ↑ / → / ↓ over the last few assessments (`coachdb.py trend --dimens
 
 | Dimension | Level | Latest evidence (one line) | Trend |
 | --- | --- | --- | --- |
-| Decomposition | 4 | 3345: restatement with zero corrections including the `n' >= n` inclusivity and both ranges, and the "why can the search stop at 100?" probe answered crisply and unaided — "100 multiplies digits to 0, and 0 is an absorbing element" | ↑ |
-| Pattern recognition | 4 | 3345: built a digit-product table, proposed a closed-form ones-digit snap from it, then killed it themselves off an L0 carrying no new content (`33 → 9` for `t = 9`) and replaced it with a bounded scan they could justify | → |
-| Complexity analysis | 4 | 3345: derived the ≤10-step bound unaided *at approach stage* and used it as the reason to drop the shortcut, then stated O(1)/O(1) from that argument rather than from the judge's 0ms panel sitting on screen — though the bound is near-trivial here and does not test the bound-and-multiply trap | ↑ |
-| Implementation correctness | 3 | 3345: two judge-fatal defects at the ready signal — `i // 10` fabricating a zero factor so every `n < 10` returned `n`, and `range(n, 100)` excluding the one value they had personally proven is the universal fallback; both root-caused and fixed correctly first try in 144s | ↓ |
-| Edge-case handling | 2 | 3345: all three self-authored tests enter the `n%10 == 0 or t == 1` early return and exit — **zero tests reached the loop body**, the only code worth doubting — and both coach tests landed in that gap and failed; partial credit for killing their own bad test by hand-check before running | ↓ |
-| Optimization | 3 | *(not exercised on 3345 — the first correct version was already O(1))* 3310: root-caused the mark-at-pop blowup unaided from one failing test and found both structural redundancies when asked whether each earns its keep; tapped out leaving two unevaluated beliefs standing | → |
+| Decomposition | 4 | 3348: named *minimality*, not construction, as where the difficulty lives — the correct diagnosis of a Hard, reached unaided; separated "`num` may contain a `0`" from "the answer may not" at intake, and killed the 3345 bounded scan on both correct grounds | → |
+| Pattern recognition | 2 | 3348: reached prefix-freeze independently but could not turn "I have no clue where the bump is" into "then try every bump" — four L0/L1 attempts stalled over 75 min, and the class name had to be handed over at L3 on request | ↓ |
+| Complexity analysis | 2 | 3348: asserted a `2ⁿ` arrangement cost for a subproblem their own bump invariant had already eliminated, and left "how many pivots × cost per pivot" unanswered across three asks — the question that would have ended the session | ↓ |
+| Implementation correctness | 3 | *(not exercised on 3348 — no code written)* 3345: two judge-fatal defects at the ready signal, `i // 10` fabricating a zero factor and `range(n, 100)` excluding the proven fallback; both root-caused and fixed first try in 144s | ↓ |
+| Edge-case handling | 2 | 3348: flagged at intake that `num` may contain a `0`, then never converted it into a constraint on the answer; separately skipped "is the input already valid?" on three self-built examples, two of which were answered by the input itself | ↓ |
+| Optimization | 3 | *(not exercised on 3348 — nothing was built to optimize)* 3310: root-caused the mark-at-pop blowup unaided and found both structural redundancies when asked whether each earns its keep; tapped out leaving two unevaluated beliefs standing | → |
 
 ## Focus next
 
-- **`#weakness:confirmatory-testing` — new, and the sharpest finding in six sessions.**
-  Your three tests on 3345 were `test_with_100`, `test_with_1`, `test_with_10_mult`.
-  Map each to the path it enters: **all three hit the same early return and exit.** Not one
-  test reached the loop — the only code in the function you had any reason to doubt. The
-  habit is solid (four sessions running, written pre-ready, expectations hand-checked); what
-  failed is *selection*. You tested the parts you had already proven. **Drill: before declaring
-  ready, list your code's branches and put a test on each one. A branch with no test is the
-  branch that ships broken.** Both defects were there, and both would have been a WA.
-- **`#weakness:off-by-one` — the proven fact that didn't reach the code.** You established at
-  intake that 100 always qualifies, used it to bound the search, used it again to bound the step
-  count — then wrote `range(n, 100)`, excluding it. Your own correction comment names the false
-  inference precisely: the shortcut fires on *`n`* being a multiple of 10, but *the answer* being
-  100 is a different event. **Rule: when a specific value is load-bearing in your argument,
-  check by hand that it is reachable in your code.** Same shape as the 0-absorption bug next to
-  it, where `i // 10` manufactured a zero that is not a digit of `i` at all.
-- **`#weakness:unevaluated-expression` — still open, untested today.** Six sessions running
-  before 3345, and 3345 gave it nothing to bite on: a ≤10-step bound needs no counting argument.
-  The escape route from the last debrief is still the one to reach for on the next problem with
-  a sum-over-structure quantity — stop asking *"how big can one of these get?"* and ask
-  ***"who put each entry there?"*** Consider a medium graph/array problem next to actually test it.
+- **`#weakness:derive-not-enumerate` — new, and the whole story of 3348.** You built nine of
+  the twelve components of a Hard in one sitting and then spent 75 minutes stuck on one belief:
+  *"if I know where to put the bump I'd solved it by now."* The bump position had a candidate
+  set of size `n` and a cheap feasibility test per candidate. You never had to know it. Your own
+  iterative line-pushing kept invalidating its own precondition, and you read that as the
+  *problem* being intractable rather than the *derivation* being the wrong move.
+  **Drill: the moment you catch yourself trying to compute which choice is right, stop and ask
+  two questions — how many values can it take, and what does one cost to test? Multiply. If it
+  fits the budget, the derivation is optional.** This is also why complexity-analysis fell this
+  session: that multiplication *was* the unlock, and it was asked three times.
+- **`#weakness:unvalidated-counterexample` — build the oracle, stop arguing with yourself.**
+  Six hand-built instances, three wrong. Your pushback was right about two of them: hand-deriving
+  a *minimal* answer is the algorithm, so those don't count against you. The other three were
+  one multiplication each — `11119` has digit product `9`, and twice the input itself was already
+  the answer. **An eight-line brute force in `tests/` answers any small instance instantly and is
+  safe to write precisely because it is far too slow to be the solution.** You invent examples
+  constantly and they're your best tool; give them an instrument.
+- **The trivial branch keeps going unchecked — second session running.** On 3345 all three of
+  your tests entered the early return and none reached the loop. On 3348 you skipped "is `num`
+  itself already the answer?" three times — which is *example 2 of the statement*. Different
+  scope (tests then, design examples now), same shape: the cheapest branch is the one you walk
+  past. **Check the degenerate case first, always, and out loud.**
 
-**Closed this session:** `#weakness:unaudited-instrument`. You wrote a fourth test asserting the
-answer is always the next multiple of 10, hand-checked the expectation against the *statement*
-rather than against your code's output, found it false, and deleted it before running the suite.
-That is exactly the audit that was missing twice on 3310, performed unprompted. The judge's
-"0 ms · beats 100%" panel was also right in front of you at debrief and you quoted your bound
-argument instead.
+**Closed / holding:** `#weakness:unaudited-instrument` stayed closed — when told to audit
+`23299`, you did it immediately and correctly ("9 hides a 3 inside it"). `#weakness:conjecture-as-proof`
+recurred but only mildly: you flagged *"i cant think of an example here"* yourself, which is the
+flag working; you just built on the absence anyway.
+
+**Worth keeping:** given "hand-trace your pipeline on the provided examples," you went further
+than asked — took a case your model handled, deliberately perturbed it into one you suspected it
+wouldn't, and killed your own rule with it. That is the 3345 drill applied at design time instead
+of test time, unprompted, and it is what produced the pivot insight in the first place.
 
 <!-- Coach reminder: do NOT name a technique for an upcoming problem here. Doing so at the
      end of the 3014 debrief contaminated 3016's pattern-recognition score. Point at a
