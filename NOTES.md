@@ -12,47 +12,45 @@ Trend: ↑ / → / ↓ over the last few assessments (`coachdb.py trend --dimens
 
 | Dimension | Level | Latest evidence (one line) | Trend |
 | --- | --- | --- | --- |
-| Decomposition | 4 | 3348: named *minimality*, not construction, as where the difficulty lives — the correct diagnosis of a Hard, reached unaided; separated "`num` may contain a `0`" from "the answer may not" at intake, and killed the 3345 bounded scan on both correct grounds | → |
-| Pattern recognition | 2 | 3348: reached prefix-freeze independently but could not turn "I have no clue where the bump is" into "then try every bump" — four L0/L1 attempts stalled over 75 min, and the class name had to be handed over at L3 on request | ↓ |
-| Complexity analysis | 2 | 3348: asserted a `2ⁿ` arrangement cost for a subproblem their own bump invariant had already eliminated, and left "how many pivots × cost per pivot" unanswered across three asks — the question that would have ended the session | ↓ |
-| Implementation correctness | 3 | *(not exercised on 3348 — no code written)* 3345: two judge-fatal defects at the ready signal, `i // 10` fabricating a zero factor and `range(n, 100)` excluding the proven fallback; both root-caused and fixed first try in 144s | ↓ |
-| Edge-case handling | 2 | 3348: flagged at intake that `num` may contain a `0`, then never converted it into a constraint on the answer; separately skipped "is the input already valid?" on three self-built examples, two of which were answered by the input itself | ↓ |
-| Optimization | 3 | *(not exercised on 3348 — nothing was built to optimize)* 3310: root-caused the mark-at-pop blowup unaided and found both structural redundancies when asked whether each earns its keep; tapped out leaving two unevaluated beliefs standing | → |
+| Decomposition | 4 | 3302: restatement caught every trap in the statement unaided — lexicographic order applies to the array not the string, "at most one" includes zero, `len(seq)==len(word2)` — and self-corrected their own phantom `word2'` before any prompt | → |
+| Pattern recognition | 2 | 3302: the enumerate-candidates-and-verify skeleton was in message one and still there in the last; every proposed fix was an inner-loop speedup, and the argument ruling out linear was silently conditioned on keeping the outer loop | → |
+| Complexity analysis | 3 | 3302: held a judge budget of 1e10 ops/s (wrong by 3–4 orders), but on being told to measure rather than argue, ran it, got 2e7, and derived 5e3 s in one turn; later rejected their own precompute sketch on the bound unprompted | ↑ |
+| Implementation correctness | 3 | *(not exercised on 3302 — no code written)* 3345: two judge-fatal defects at the ready signal, `i // 10` fabricating a zero factor and `range(n, 100)` excluding the proven fallback; both root-caused and fixed first try in 144s | → |
+| Edge-case handling | 4 | 3302: three self-built probe instances, all three correct — `aabcc`/`atc` killed binary search over slots, `abcdce`/`abcc` killed the user's own 99%-confidence rule | ↑ |
+| Optimization | 2 | 3302: from a correct O(n·m) reached the collapse to m thresholds and the telescoping precompute unaided, then stalled — the target needed the bound named, then the witness decomposition, then a full reveal | ↓ |
 
 ## Focus next
 
-- **`#weakness:derive-not-enumerate` — new, and the whole story of 3348.** You built nine of
-  the twelve components of a Hard in one sitting and then spent 75 minutes stuck on one belief:
-  *"if I know where to put the bump I'd solved it by now."* The bump position had a candidate
-  set of size `n` and a cheap feasibility test per candidate. You never had to know it. Your own
-  iterative line-pushing kept invalidating its own precondition, and you read that as the
-  *problem* being intractable rather than the *derivation* being the wrong move.
-  **Drill: the moment you catch yourself trying to compute which choice is right, stop and ask
-  two questions — how many values can it take, and what does one cost to test? Multiply. If it
-  fits the budget, the derivation is optional.** This is also why complexity-analysis fell this
-  session: that multiplication *was* the unlock, and it was asked three times.
-- **`#weakness:unvalidated-counterexample` — build the oracle, stop arguing with yourself.**
-  Six hand-built instances, three wrong. Your pushback was right about two of them: hand-deriving
-  a *minimal* answer is the algorithm, so those don't count against you. The other three were
-  one multiplication each — `11119` has digit product `9`, and twice the input itself was already
-  the answer. **An eight-line brute force in `tests/` answers any small instance instantly and is
-  safe to write precisely because it is far too slow to be the solution.** You invent examples
-  constantly and they're your best tool; give them an instrument.
-- **The trivial branch keeps going unchecked — second session running.** On 3345 all three of
-  your tests entered the early return and none reached the loop. On 3348 you skipped "is `num`
-  itself already the answer?" three times — which is *example 2 of the statement*. Different
-  scope (tests then, design examples now), same shape: the cheapest branch is the one you walk
-  past. **Check the degenerate case first, always, and out loud.**
+- **`#weakness:optimize-the-skeleton` — new, and it is the same animal as 3348's
+  `#weakness:derive-not-enumerate`.** On 3348 you would not *adopt* enumeration; on 3302 you
+  would not *drop* it. Both times the control structure was the one thing never treated as a
+  variable — every move was made *inside* it. On 3302 that cost 76 minutes: the skeleton from
+  your first message was correct but O(n·m), and each improvement you found (binary search over
+  slots, O(1) feasibility, telescoped precompute) made that skeleton cheaper rather than asking
+  whether it should exist. The intended solution has no candidate loop at all.
+  **Drill: after two or three genuine improvements fail to reach the target, stop improving.
+  Say the skeleton out loud as an assumption — "I am enumerating candidates and verifying
+  each" — and ask what a solution that never runs that loop would have to look like.** The
+  usual escape is the one you missed here: replace a global choice made by enumeration with a
+  local choice made during one pass, licensed by precomputed lookahead.
+- **Finish the complexity chain every time — the last link was a wrong constant.** You believed
+  the judge does 1e10 ops/sec; it is ~2e7 for a bare Python loop and single-digit millions for
+  real work. That prior was load-bearing and had been silently passing bad plans for a while.
+  You corrected it in one turn once told to measure, and immediately applied it to reject your
+  own sketch. **Keep the number, and keep the habit: expression → multiply out → divide by rate
+  → compare to budget. An unfinished chain is not an analysis.**
 
-**Closed / holding:** `#weakness:unaudited-instrument` stayed closed — when told to audit
-`23299`, you did it immediately and correctly ("9 hides a 3 inside it"). `#weakness:conjecture-as-proof`
-recurred but only mildly: you flagged *"i cant think of an example here"* yourself, which is the
-flag working; you just built on the absence anyway.
+**Closed:** `#weakness:unvalidated-counterexample` — decisively. Three instances built on 3302,
+three correct, two of them fatal to load-bearing ideas. `#weakness:conjecture-as-proof` — you
+went hunting for a counterexample to something you held at 99% and found it. Both were the open
+items from 3348 and both closed in one session. The trivial-branch blind spot (3345, 3348) did
+not recur.
 
-**Worth keeping:** given "hand-trace your pipeline on the provided examples," you went further
-than asked — took a case your model handled, deliberately perturbed it into one you suspected it
-wouldn't, and killed your own rule with it. That is the 3345 drill applied at design time instead
-of test time, unprompted, and it is what produced the pivot insight in the first place.
+**Worth keeping:** you rejected your own precompute sketch on complexity grounds, unprompted,
+one turn after building it — "if you somehow encountered an all F table you perform check on
+each cell, that is O(mn)." That is the analysis habit turned on your own work, which is the
+hardest place to point it. Also: you pushed back on two coach claims this session and were
+right both times. Keep doing that.
 
 <!-- Coach reminder: do NOT name a technique for an upcoming problem here. Doing so at the
      end of the 3014 debrief contaminated 3016's pattern-recognition score. Point at a
