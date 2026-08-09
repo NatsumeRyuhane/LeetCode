@@ -57,4 +57,27 @@ and the amortized-cost argument, not pattern recognition.
 
 ## User's restatement
 
-_(filled in during UNDERSTANDING-CHECK)_
+> so we are given a sliding window of length k on array nums. we are tasked to find out
+> the max value in the sliding window for every step. the constrints are there are 1 to
+> 10⁵ elements, window is smaller or equal to the size of array, and values range from
+> -1e4 to 1e4
+
+## Initial approach (user's words)
+
+> the bf approach is to call max() once every step - an n² TC. So I am going to try
+> exercise the idea:
+>
+> on the first pass to populate the sliding window, we can just call max once -
+> equivalant to scan everything in there to require a known maximum in O(n).
+>
+> As the window slides, we notice one elements is evicted and one element is added. Name
+> two elements a and b. when a is evicted, it can either be the max element or not.
+>
+> so if b is bigger than a - then max becomes b with no problem. we can just evict a just
+> fine.
+>
+> But if b is smaller - that means a is being evicted. Say if a is also not the max
+> element - a comparison can tell us that, the max value is uphold. We dont need to
+> change anything.
+>
+> But what if a is the max element? How are we going to find the biggest element then?
