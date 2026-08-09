@@ -110,3 +110,41 @@ class Solution:
 >
 > bacause there are no negative values. If you can take all remaining stones, you
 > should do it.
+
+### Corrected terminal condition
+
+> if piles.length - state.head_pointer <= state.M * 2
+>     return state.player_control * sum(piles[state.head_pointer:])
+>
+> the left part of inequality should reflect the remaining items.
+
+### Score perspective and state-key argument
+
+> f returns the relative score, alice counts as positive.
+>
+> The player_control must remain in the key. reason:
+>
+> consider example
+>
+> [1, 2, 3, 4, 5]
+>
+> if both choose to only take one for some reason, the game reaches:
+>
+> (2, +1, 1)
+>
+> if Alice took two at the 1st round, the game reaches:
+>
+> (2, -1, 2)
+>
+> The pointer points at the same head, with different player controls and different M
+> values. This proves that both need to be encoded in state representation.
+
+### Controlled state-key witness
+
+> This is also constructable. Consider
+>
+> (0, +1, 1) -> (2, -1, 2) -> (3, +1, 2) -> (4, -1, 2) -> (5, +1, 2)
+>
+> and
+>
+> (0, +1, 1) -> (2, -1, 2) -> (4, +1, 2) -> (5, -1, 2)
