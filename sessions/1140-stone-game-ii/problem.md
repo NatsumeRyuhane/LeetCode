@@ -46,4 +46,38 @@ class Solution:
 
 ## User's restatement
 
-_(filled in during UNDERSTANDING-CHECK)_
+> This game is a variant of 0877 and 1406. I have explained the basic structure of
+> the game rule sufficiently before - so I will skip that part. Now, what is different
+> here is that the selection has changed: the pile of rock that can be taken is only
+> from one direction: head (left), never tail.
+>
+> And the number that a player can take evolves dynamically as the game progresses.
+> At each turn, there is an value M, and a player may take anu number of [1, 2M]
+> piles of stone, at the end of the turn, M is set to max(M, X) for subsequent turns.
+>
+> Ex 1 deomonstrates that the first player, for example, can opt in for 1 pile or 2
+> tiles. And one tile is better in there.
+>
+> The constraints demonstrates that the range of piles is [1, 100] and the value of
+> each pile is in [1, 1e4], so no negative values.
+
+### Initial approach (same turn)
+
+> Based on the same solution of the same series of the problem, our representation
+> of the relative score change should also work here. However, depending on how the
+> game evolved, M must persist into the state representation, making the state:
+>
+> (head_pointer, player_control, M_value)
+>
+> What we are solving here is the relative score change when the game is in this
+> state, recursively. So we are essentially soving for f((0, 1, 1)), same structure
+> as before.
+>
+> The total number of possible states is 100*2*?, ? stands for all the possible number
+> of value of M. A rough upper bound of M should be 50, when player can now take all
+> stones in one, and larger Ms dont really make a difference. So this should yield
+> roughly 200*50 = 1e4 states.
+>
+> We are still going to make a dict to cache the results. But we need some optimization,
+> as the different values of M will explode the states and make lookup tricky. But the
+> general structure should stay.
