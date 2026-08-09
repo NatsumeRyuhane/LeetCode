@@ -18,3 +18,7 @@ def test_example_1():
 
 def test_example_2():
     assert run([1, 2, 3, 4, 5, 100]) == 104
+
+def test_take_all():
+    assert run([1]) == 1
+    assert run([1, 2]) == 3
