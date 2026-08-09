@@ -22,3 +22,11 @@ def test_example_2():
 def test_take_all():
     assert run([1]) == 1
     assert run([1, 2]) == 3
+
+def test_large_inputes():
+    t = []
+    import random
+    random.seed(0)
+    for i in range(100):
+        t.append(random.randint(1, 10**4))
+    run(t)
