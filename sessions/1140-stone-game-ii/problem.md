@@ -81,3 +81,32 @@ class Solution:
 > We are still going to make a dict to cache the results. But we need some optimization,
 > as the different values of M will explode the states and make lookup tricky. But the
 > general structure should stay.
+
+### Approach refinement
+
+> Yes. I missed this time we are asked to return the actual maximum acheivable score
+> for alice. But it will not be problematic, reason:
+>
+> The total value of the entire array is known, say it is S. At the end, alice scores
+> with A, and Bob scores with B. Our presentation yields the relative score diff D.
+> So:
+>
+> A + B = S
+>
+> A - B = D
+>
+> (A + B) + (A - B) = S + D
+>
+> 2A = S + D
+>
+> A = (S + D) / 2
+>
+> So we can work that out with our representation.
+>
+> base case:
+>
+> if piles.length <= state.M * 2
+>     return state.player_control * sum(piles[state.head_pointer:])
+>
+> bacause there are no negative values. If you can take all remaining stones, you
+> should do it.
