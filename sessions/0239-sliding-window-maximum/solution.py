@@ -27,8 +27,8 @@ class Solution:
             evict = i+k
             maintain_maxelem((elem, evict))
 
-        ans = []
-        for i in range(k-1, len(nums)):
+        ans = [self.maxelem[0][0]]
+        for i in range(k, len(nums)):
             do_expire(i)
             elem = nums[i]
             evict = i+k
