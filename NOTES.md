@@ -14,7 +14,7 @@ Levels: 1 nascent · 2 developing · 3 competent · 4 proficient · 5 strong.
 | Complexity analysis | 3 | 1140: after one L1 to count slice cost, independently found prefix sums and finished at `O(nM²)` time / `O(nM)` space; briefly read total lookups as unique states | ↑ |
 | Implementation correctness | 3 | 1140: first ready snapshot failed collection and contained several transcription defects; fixed all from test evidence without method hints and shipped Accepted | → |
 | Edge-case handling | 3 | 1140: added correct take-all boundary assertions; the random `n=100` probe had no expected assertion and measured execution rather than correctness | → |
-| Optimization | 3 | 1140: independently removed repeated sums, then with L0/L1 reframed to current-player value and cut the submission from 411 ms / 35.62 MB to 155 ms / 26.98 MB | ↑ |
+| Optimization | 3 | 1140: cut 411 ms to 155 ms via prefix sums and state collapse; later unpacked the `O(n²)` monotone-window method with L1/L2 but stopped before implementing it | ↑ |
 
 ## Focus next
 

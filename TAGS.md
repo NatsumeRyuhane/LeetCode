@@ -17,6 +17,7 @@ trailer or a `log.md` entry, so tags never fork into synonyms. Three namespaces.
 ## `#technique:*` — the method that cracks it
 - `#technique:two-pointer` — opposing or same-direction pointers
 - `#technique:sliding-window` — variable/fixed window over a sequence
+- `#technique:monotonic-queue` — maintain a sliding-window min/max in amortized O(1) by keeping indices in expiry order and values monotone; discard an older candidate only when a newer candidate dominates it and expires later
 - `#technique:binary-search` — search a sorted space
 - `#technique:binary-search-on-answer` — binary search the answer value, not the array
 - `#technique:dp` — dynamic programming / memoization

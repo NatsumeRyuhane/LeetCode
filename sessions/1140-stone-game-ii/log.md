@@ -6,9 +6,10 @@ Newest sessions appended below; never overwrite prior sections.
 
 ## 2026-08-09 — session 1
 
-- **Outcome:** solved-optimal
-- **Final complexity:** time `O(nM^2)` = `O(n^3)` / space `O(nM)` = `O(n^2)`
-- **Hints used:** L0 × 5, L1 × 3
+- **Outcome:** solved-suboptimal
+- **Final implemented complexity:** time `O(nM^2)` = `O(n^3)` / space `O(nM)` = `O(n^2)`
+- **Best known examined:** time `O(n^2)` / space `O(n^2)` via monotone windows; understood but not implemented
+- **Hints used:** L0 × 7, L1 × 7, L2 × 3
 - **Tags:** `#technique:dp` `#technique:minimax` `#technique:prefix-sum`
   `#technique:zero-sum-symmetry` `#weakness:language-mechanics`
   `#weakness:unaudited-instrument` `#weakness:wrong-proposition`
@@ -47,3 +48,26 @@ the take-all path received explicit tests, but the added random `n=100` probe ha
 expected-value assertion and therefore measured execution rather than correctness.
 
 **On redo (if applicable).** First attempt; not applicable.
+
+### Post-debrief complexity audit
+
+The user brought the referenced LeetCode article back for an `O(n^2)` claim check.
+The coach initially relied on a stale indexed copy exposing only the article's older
+`O(n^3)` transition and incorrectly rejected the claim. The user supplied the current
+code and complexity screenshot, which contains a genuine `O(n^2)` optimisation: split
+the child minimum into a fixed-`m` column interval (`x <= m`) and a diagonal interval
+(`x > m`), then maintain both interval minima with monotone queues. Each DP cell enters
+and leaves each relevant window at most once, making transition work amortized `O(1)`
+per `O(n^2)` state. This correction supersedes the earlier audit conclusion; the final
+implemented solution remains `O(n^3)`, accepted and substantially optimized, but is not
+the best known asymptotic bound.
+
+To unpack the dense transition, the user expanded `m=2` into child coordinates and
+identified the fixed-`M` horizontal segment followed by the `(head,M)` diagonal. They
+then derived the diagonal-window update from `D_m=[m+1,2m]` to
+`D_(m+1)=[m+2,2m+2]`: remove one, reuse the middle, add two. Three L2 explanations
+were needed to translate `D_3` and separate two ideas that the compact code conflates:
+DP values need not be monotone; the deque establishes monotonicity dynamically by
+discarding an older value only when an actually compared newer value is no larger and
+expires later. The user stopped after understanding that invariant rather than porting
+the `O(n^2)` implementation.
