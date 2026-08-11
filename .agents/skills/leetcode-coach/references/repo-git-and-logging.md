@@ -21,7 +21,8 @@ Everything the coach writes to disk, plus the git conventions that make sessions
 ├── NOTES.md                # BOUNDED snapshot: current ability levels + focus (materialized view)
 ├── TAGS.md                 # canonical tag registry (source of truth for tags)
 ├── tools/
-│   └── coachdb.py          # stdlib JSONL store + query CLI (copied in at bootstrap)
+│   ├── coachdb.py          # stdlib JSONL store + query CLI (copied in at bootstrap)
+│   └── dashboard.sh        # launches the skill's dashboard against THIS repo (copied in at bootstrap)
 ├── db/                     # append-only JSONL, created lazily by coachdb
 │   ├── events.jsonl        # timeline: turns, state changes, hints, test runs (with gap_s)
 │   ├── sessions.jsonl      # one summary row per completed session
@@ -45,7 +46,7 @@ Run only if the piece is missing; each step is idempotent.
 1. `git rev-parse --git-dir` — if it fails, `git init`.
 2. If no `pyproject.toml`, copy `assets/templates/pyproject.toml`, then `uv sync` (the template already declares pytest in `[dependency-groups]`; sync creates `.venv/` and `uv.lock` — no `uv add` needed).
 3. Copy `assets/templates/gitignore` → `.gitignore`, `NOTES.md`, `TAGS.md` if absent. Create `sessions/`.
-4. Copy `assets/tools/coachdb.py` → `tools/coachdb.py` if absent (`db/` is created lazily on first write). The copy — rather than invoking from the skill directory — keeps the repo self-contained.
+4. Copy `assets/tools/coachdb.py` → `tools/coachdb.py` if absent (`db/` is created lazily on first write). The copy — rather than invoking from the skill directory — keeps the repo self-contained. Copy `assets/tools/dashboard.sh` → `tools/dashboard.sh` too, and `chmod +x` it; it must live in the repo because it derives which repo to serve from its own path. Both copies are worth re-checking on an already-bootstrapped repo — a repo set up before a tool existed is missing it, and this step is the only thing that installs it.
 5. If the repo has no commits yet: `git add -A && git commit -m "chore: bootstrap leetcode practice repo"`. If the commit fails on missing git identity, ask the user for name/email rather than inventing one.
 
 ## The coachdb layer
