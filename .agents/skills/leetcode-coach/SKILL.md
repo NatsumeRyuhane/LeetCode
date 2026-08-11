@@ -77,6 +77,29 @@ Move through these states in order. Each lists its entry trigger, what you do, a
 
 Formats for `log.md`, `NOTES.md`, `TAGS.md`, the assessment rubric, and every git convention (branch names, commit types, trailers, redo semantics, safety guards) live in `references/repo-git-and-logging.md`. Read it before your first write-to-disk of a session.
 
+## The dashboard
+
+`assets/dashboard/` is a React + TypeScript + Tailwind app that reads the record and renders it — activity heatmap, ability profile and trends, session timelines with per-hint latency, tag and weakness recurrence, time-in-state. **You do not build or modify it; you run it.**
+
+When the user asks to see their progress — "show me my dashboard", "how am I doing", "open the dashboard", "visualise my progress":
+
+```bash
+cd <skill-dir>/assets/dashboard
+[ -d node_modules ] || npm install          # first run only, ~1 min
+COACH_REPO_ROOT=<repo-root> npm run dev     # background it; report the URL
+```
+
+Always pass `COACH_REPO_ROOT` explicitly — the fallback (walking up from the dashboard's own directory) only finds the repo when the skill is vendored inside it, and silently fails when the skill is installed globally. Run it in the background and hand the user the printed URL; don't block the session on it. It hot-reloads on every write to `db/` and `sessions/`, so a dashboard left open updates itself as you log the current sitting — no need to restart it after a debrief.
+
+Two things follow from what it is:
+
+- **It is a viewer, not part of the record**, so unlike `coachdb.py` it is *not* copied into the practice repo — one checkout serves every repo, and `node_modules/` isn't duplicated per repo.
+- **It is read-only.** It never writes to `db/`, never runs git, never touches `sessions/`. If a number looks wrong, the record is wrong — fix it with a new `coachdb.py` row, not by editing the dashboard.
+
+`NOTES.md` still matters and is still rewritten each debrief: it is *your* bounded context, cheap to read mid-session, while the dashboard is the human-facing view. Don't let one substitute for the other, and never point the user at the dashboard in place of an actual debrief.
+
+If Node isn't installed, say so plainly and carry on — the dashboard is a convenience, and every number it shows is reachable through `coachdb.py query` / `stats`.
+
 ## Redo semantics
 
 Redoing a solved problem is expected and good. Start a fresh session branch off `main`, blank out `solution.py` so the user genuinely re-derives it (git holds the previous version — never delete history), and append a new dated section to the existing `log.md` rather than overwriting. History then shows both attempt bubbles, and DEBRIEF can compare: did the weakness flagged last time actually resolve?
@@ -99,3 +122,4 @@ Concrete callbacks ("same pointer-bookkeeping slip as 0146, three sessions ago �
 - `references/repo-git-and-logging.md` — repo layout, bootstrap steps, the pytest import trick, git conventions, the `coachdb` schemas/CLI, and the file/assessment formats. **Read before your first write to disk.**
 - `assets/templates/` — seed files (`NOTES.md`, `TAGS.md`, `problem.md`, `log.md`) and the `tests/` scaffold, copied in during BOOTSTRAP / INTAKE.
 - `assets/tools/coachdb.py` — the JSONL store CLI, copied to `tools/coachdb.py` in the repo at BOOTSTRAP.
+- `assets/dashboard/` — the read-only React dashboard. Run it, don't rebuild it; `assets/dashboard/README.md` covers commands, repo resolution, and the validated chart palette.
