@@ -84,16 +84,26 @@ Formats for `log.md`, `NOTES.md`, `TAGS.md`, the assessment rubric, and every gi
 When the user asks to see their progress — "show me my dashboard", "how am I doing", "open the dashboard", "visualise my progress":
 
 ```bash
-cd <skill-dir>/assets/dashboard
-[ -d node_modules ] || npm install          # first run only, ~1 min
-COACH_REPO_ROOT=<repo-root> npm run dev     # background it; report the URL
+./tools/dashboard.sh            # from the repo root; --demo serves the bundled fixture instead
 ```
 
-Always pass `COACH_REPO_ROOT` explicitly — the fallback (walking up from the dashboard's own directory) only finds the repo when the skill is vendored inside it, and silently fails when the skill is installed globally. Run it in the background and hand the user the printed URL; don't block the session on it. It hot-reloads on every write to `db/` and `sessions/`, so a dashboard left open updates itself as you log the current sitting — no need to restart it after a debrief.
+Prefer the script. It is copied in at BOOTSTRAP and does the three things that are easy to get wrong: locates the skill (repo-local or global), installs `node_modules/` on first run (~1 min), and points the app at *this* repo. It also fails with a usable message when npm is missing rather than a stack trace.
+
+If it isn't there — a repo bootstrapped before the script existed — copy `assets/tools/dashboard.sh` → `tools/dashboard.sh` (`chmod +x`) rather than working around it; that is a missing bootstrap step, not a reason to hand-roll. The equivalent by hand, if you need it:
+
+```bash
+cd <skill-dir>/assets/dashboard
+[ -d node_modules ] || npm install
+COACH_REPO_ROOT=<repo-root> npm run dev
+```
+
+On that path always pass `COACH_REPO_ROOT` explicitly — the fallback (walking up from the dashboard's own directory) only finds the repo when the skill is vendored inside it, and silently fails when the skill is installed globally. Note the script must be run from the repo, not from `assets/tools/`: it derives the repo root from its own location, so invoking it in place resolves to `assets/` and serves nothing.
+
+Run it in the background and hand the user the printed URL; don't block the session on it. It hot-reloads on every write to `db/` and `sessions/`, so a dashboard left open updates itself as you log the current sitting — no need to restart it after a debrief.
 
 Two things follow from what it is:
 
-- **It is a viewer, not part of the record**, so unlike `coachdb.py` it is *not* copied into the practice repo — one checkout serves every repo, and `node_modules/` isn't duplicated per repo.
+- **It is a viewer, not part of the record**, so unlike `coachdb.py` the *app* is not copied into the practice repo — one checkout serves every repo, and `node_modules/` isn't duplicated per repo. Only the launcher script is copied in, because it has to know which repo it is serving.
 - **It is read-only.** It never writes to `db/`, never runs git, never touches `sessions/`. If a number looks wrong, the record is wrong — fix it with a new `coachdb.py` row, not by editing the dashboard.
 
 `NOTES.md` still matters and is still rewritten each debrief: it is *your* bounded context, cheap to read mid-session, while the dashboard is the human-facing view. Don't let one substitute for the other, and never point the user at the dashboard in place of an actual debrief.
@@ -122,4 +132,5 @@ Concrete callbacks ("same pointer-bookkeeping slip as 0146, three sessions ago �
 - `references/repo-git-and-logging.md` — repo layout, bootstrap steps, the pytest import trick, git conventions, the `coachdb` schemas/CLI, and the file/assessment formats. **Read before your first write to disk.**
 - `assets/templates/` — seed files (`NOTES.md`, `TAGS.md`, `problem.md`, `log.md`) and the `tests/` scaffold, copied in during BOOTSTRAP / INTAKE.
 - `assets/tools/coachdb.py` — the JSONL store CLI, copied to `tools/coachdb.py` in the repo at BOOTSTRAP.
+- `assets/tools/dashboard.sh` — the dashboard launcher, copied to `tools/dashboard.sh` in the repo at BOOTSTRAP. Run it from the repo root.
 - `assets/dashboard/` — the read-only React dashboard. Run it, don't rebuild it; `assets/dashboard/README.md` covers commands, repo resolution, and the validated chart palette.
