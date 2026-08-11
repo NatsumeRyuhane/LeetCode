@@ -3,13 +3,11 @@ from typing import List
 
 class Solution:
     def missingInteger(self, nums: List[int]) -> int:
-        if len(nums) == 1:
-            return nums[0]+1
-        
         largerNumbers: set[int] = set()
         sequential_end = len(nums)-1
         prefix_sum = 0
         global_max = 0
+        ceil = float("inf")
 
         for idx, elem in enumerate(nums):
             if idx < len(nums) and sequential_end > idx:
@@ -25,6 +23,9 @@ class Solution:
             else:
                 if elem >= prefix_sum:
                     largerNumbers.add(elem)
+
+        if sequential_end == 0:
+            return nums[0]+1
 
         print(f"sum:{prefix_sum}, region:{nums[0:sequential_end+1]}, global_max:{global_max}, numbers:{list(largerNumbers)}")
         if prefix_sum > global_max:

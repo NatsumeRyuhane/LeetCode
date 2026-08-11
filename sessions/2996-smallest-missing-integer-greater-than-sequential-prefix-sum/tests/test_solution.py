@@ -20,3 +20,7 @@ def test_all_sequentianl():
 
 def test_sequentials_but_collission():
     assert Solution().missingInteger([1, 2, 3, 4, 10, 11, 12, 13, 14, 2, 3, 4, 5]) == 15
+
+
+def test_prefix_of_length_one():
+    assert Solution().missingInteger([5, 1, 2]) == 6
