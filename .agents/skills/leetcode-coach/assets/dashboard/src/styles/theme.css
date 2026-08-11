@@ -1,0 +1,285 @@
+@import 'tailwindcss';
+
+/**
+ * COACH HUD — GitHub Primer (dark) as the design system, with a data-viz palette
+ * validated against the Primer canvas rather than eyeballed.
+ *
+ * Every value below is a Primer primitive, annotated with the role or scale
+ * step it comes from. `src/lib/primer.ts` is the source of truth and
+ * `src/lib/palette.ts` explains the chart choices — keep the two in step: that
+ * module colours the SVG marks, this file colours everything Tailwind touches.
+ *
+ * Rules this file enforces, from the brief: 1px line art only, no radii, no
+ * shadows, no soft gradients, strict grid. Every rule lives here so components
+ * stay declarative.
+ */
+@theme {
+  /* ══ LIGHT (default) ══════════════════════════════════════════════
+     Primer `light`. The dark theme below is a separately validated set,
+     never an automatic inversion of these values. */
+
+  /* ── Surfaces & ink — semantic roles ────────────────────────────── */
+  --color-canvas: #f6f8fa; /* canvas.inset — the page plane */
+  --color-panel: #ffffff; /* canvas.default — every chart surface */
+  --color-subtle: #f6f8fa; /* canvas.subtle — inset rows, empty heat cells */
+  --color-line: #d0d7de; /* border.default — structural hairlines */
+  --color-line-muted: #d8dee4; /* border.muted — grid, dividers */
+  --color-ink: #1f2328; /* fg.default */
+  --color-ink-muted: #656d76; /* fg.muted — labels, axes */
+  --color-ink-subtle: #6e7781; /* fg.subtle — de-emphasised */
+  --color-accent: #0969da; /* accent.fg */
+
+  /* ── Categorical: tag namespaces ────────────────────────────────────
+     scale.blue[5] / scale.green[6] / scale.yellow[4]. All-pairs validated
+     on canvas.default: CVD ΔE 17.4, normal-vision ΔE 26.6, all ≥ 3:1.
+     Fixed order, never cycled; a 4th namespace folds into "other". */
+  --color-cat-structure: #0969da; /* scale.blue[5] */
+  --color-cat-technique: #116329; /* scale.green[6] */
+  --color-cat-weakness: #bf8700; /* scale.yellow[4] */
+
+  /* ── Ordinal: hint ladder L0→L4 — scale.yellow[3…7] ─────────────── */
+  --color-hint-0: #d4a72c; /* scale.yellow[3] */
+  --color-hint-1: #bf8700; /* scale.yellow[4] */
+  --color-hint-2: #9a6700; /* scale.yellow[5] */
+  --color-hint-3: #7d4e00; /* scale.yellow[6] */
+  --color-hint-4: #633c01; /* scale.yellow[7] */
+
+  /* ── Ordinal: magnitude — scale.blue[3…7] ───────────────────────── */
+  --color-seq-1: #54aeff; /* scale.blue[3] */
+  --color-seq-2: #218bff; /* scale.blue[4] */
+  --color-seq-3: #0969da; /* scale.blue[5] = accent.fg */
+  --color-seq-4: #0550ae; /* scale.blue[6] */
+  --color-seq-5: #033d8b; /* scale.blue[7] */
+
+  /* ── Ordinal: activity heat — scale.green[3…7] ──────────────────── */
+  --color-heat-0: #f6f8fa; /* canvas.subtle — no activity is a surface */
+  --color-heat-1: #4ac26b; /* scale.green[3] */
+  --color-heat-2: #2da44e; /* scale.green[4] */
+  --color-heat-3: #1a7f37; /* scale.green[5] */
+  --color-heat-4: #116329; /* scale.green[6] */
+  --color-heat-5: #044f1e; /* scale.green[7] */
+
+  /* ── Status — reserved semantic roles, never a series colour.
+     Always shipped with a glyph + label, never colour alone. ─────── */
+  --color-ok: #1a7f37; /* success.fg   — solved-optimal */
+  --color-attention: #9a6700; /* attention.fg — solved-suboptimal */
+  --color-severe: #bc4c00; /* severe.fg    — revealed (L4) */
+  --color-danger: #cf222e; /* danger.fg    — unsolved */
+
+  /* ── Type ───────────────────────────────────────────────────────── */
+  --font-sans:
+    ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Segoe UI', Inter,
+    sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+
+  /* Flat 2D UI: no rounding anywhere. */
+  --radius-none: 0px;
+}
+
+/* ══ DARK ═════════════════════════════════════════════════════════════
+   Primer `dark`, stepped and validated against its own surface (#0d1117)
+   rather than flipped from the light set — the two share hue families but
+   not steps. Applied only on an explicit toggle, so the default stays
+   light regardless of the OS setting.
+
+   Ordinal ramps are ordered by MAGNITUDE, not lightness: on light they run
+   light→dark, on dark they run dark→light. In both, more is further from
+   the surface. */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --color-canvas: #010409; /* canvas.inset */
+  --color-panel: #0d1117; /* canvas.default */
+  --color-subtle: #161b22; /* canvas.subtle */
+  --color-line: #30363d; /* border.default */
+  --color-line-muted: #21262d; /* border.muted */
+  --color-ink: #e6edf3; /* fg.default */
+  --color-ink-muted: #7d8590; /* fg.muted */
+  --color-ink-subtle: #6e7681; /* fg.subtle */
+  --color-accent: #2f81f7; /* accent.fg */
+
+  /* Categorical — all-pairs on #0d1117: CVD ΔE 19.2, normal-vision ΔE 28.4.
+     yellow[2] deliberately sits above the viz lightness band; every in-band
+     all-Primer alternative lands in the 6–8 CVD warn band. It is yellow[2]
+     and not yellow[3] because yellow[3] *is* attention.fg. */
+  --color-cat-structure: #388bfd; /* scale.blue[4] */
+  --color-cat-technique: #238636; /* scale.green[5] */
+  --color-cat-weakness: #e3b341; /* scale.yellow[2] */
+
+  --color-hint-0: #693e00; /* scale.yellow[7] */
+  --color-hint-1: #845306; /* scale.yellow[6] */
+  --color-hint-2: #9e6a03; /* scale.yellow[5] */
+  --color-hint-3: #bb8009; /* scale.yellow[4] */
+  --color-hint-4: #d29922; /* scale.yellow[3] */
+
+  --color-seq-1: #0d419d; /* scale.blue[7] */
+  --color-seq-2: #1158c7; /* scale.blue[6] */
+  --color-seq-3: #1f6feb; /* scale.blue[5] = accent.emphasis */
+  --color-seq-4: #388bfd; /* scale.blue[4] */
+  --color-seq-5: #58a6ff; /* scale.blue[3] */
+
+  --color-heat-0: #161b22; /* canvas.subtle */
+  --color-heat-1: #0f5323; /* scale.green[7] */
+  --color-heat-2: #196c2e; /* scale.green[6] */
+  --color-heat-3: #238636; /* scale.green[5] */
+  --color-heat-4: #2ea043; /* scale.green[4] */
+  --color-heat-5: #3fb950; /* scale.green[3] */
+
+  --color-ok: #3fb950; /* success.fg */
+  --color-attention: #d29922; /* attention.fg */
+  --color-severe: #db6d28; /* severe.fg */
+  --color-danger: #f85149; /* danger.fg */
+}
+
+/* Hard reset of the decorative channels the brief rules out. */
+*,
+*::before,
+*::after {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+html {
+  color-scheme: light;
+  background: var(--color-canvas);
+}
+
+body {
+  margin: 0;
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  font-synthesis-weight: none;
+}
+
+/* The page plane carries a faint 1px lattice — diegetic grid paper, hard-edged
+   stops only (no soft ramp). It sits behind panels and never competes. */
+.hud-lattice {
+  background-image:
+    repeating-linear-gradient(
+      to right,
+      var(--color-line-muted) 0 1px,
+      transparent 1px 64px
+    ),
+    repeating-linear-gradient(to bottom, var(--color-line-muted) 0 1px, transparent 1px 64px);
+  background-position: 0 0;
+  /* The lattice reads harder on a light plane, where the hairline sits closer
+     to the ink than to the surface — pull it back further there. */
+  opacity: 0.35;
+}
+:root[data-theme='dark'] .hud-lattice {
+  opacity: 0.32;
+}
+
+/* ── Micro-label: the Swiss caption used on every panel and axis ── */
+.hud-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+}
+
+.hud-value {
+  font-family: var(--font-sans);
+  font-variant-numeric: proportional-nums; /* hero/stat figures stay proportional */
+  letter-spacing: -0.02em;
+}
+
+/* Table cells, axis ticks, timestamps — anything that must align vertically. */
+.hud-num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Diegetic corner ticks: four 1px L-marks, drawn with borders on pseudo
+   elements so no extra DOM is needed. */
+.hud-ticks {
+  position: relative;
+}
+.hud-ticks::before,
+.hud-ticks::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  pointer-events: none;
+  border-color: var(--color-ink-muted);
+  border-style: solid;
+}
+.hud-ticks::before {
+  top: -1px;
+  left: -1px;
+  border-width: 1px 0 0 1px;
+}
+.hud-ticks::after {
+  bottom: -1px;
+  right: -1px;
+  border-width: 0 1px 1px 0;
+}
+
+/* Unordered list items are marked by a 1px rule, not a bullet glyph — the same
+   line vocabulary as everything else. Ordered lists keep their numerals. */
+.markdown ul {
+  list-style: none;
+  padding-left: 0;
+}
+.markdown ul > li {
+  position: relative;
+  padding-left: 1rem;
+}
+.markdown ul > li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.72em;
+  width: 8px;
+  height: 1px;
+  background: var(--color-line);
+}
+.markdown ul ul {
+  margin-left: 0.875rem;
+}
+
+/* Focus ring: a hairline, consistent with everything else. */
+:where(a, button, [tabindex]):focus-visible {
+  outline: 1px solid var(--color-seq-5);
+  outline-offset: 1px;
+}
+
+::selection {
+  background: var(--color-seq-3);
+  color: #fff;
+}
+
+/* Scrollbars, trimmed to the same line vocabulary. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line) transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--color-line);
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

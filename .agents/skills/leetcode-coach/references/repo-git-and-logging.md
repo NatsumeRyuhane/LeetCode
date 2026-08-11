@@ -94,6 +94,8 @@ python3 tools/coachdb.py stats --session <key>  # wall/active time, time-in-stat
 
 **Division of labor with git:** the db answers structured questions (tags, trends, timing); git answers narrative ones (what did the code look like, what was the attempt sequence). Commit trailers stay as a redundant grep path, but the db is the primary lookup.
 
+**The dashboard reads these same files.** `assets/dashboard/` renders `db/*.jsonl` + `sessions/` + `NOTES.md` + `TAGS.md` as a live HUD, and it re-derives the `stats` numbers in TypeScript rather than shelling out to this CLI. So a change to `cmd_stats`' rules — `BREAK_S`, how a gap accrues to a state, how a pause pairs with its neighbours — must be mirrored in `assets/dashboard/src/lib/analytics.ts`, or the dashboard and the debrief will quietly disagree.
+
 **Timing discipline:** the gap data only exists if `log` runs every turn — make it the first action on each user message. Interpret gaps per the rules in SKILL.md (weak signal, corroborate with content, >30 min ≈ break).
 
 ## The pytest import trick
@@ -174,7 +176,7 @@ Statement (pasted or fetched), source URL, difficulty, and — added during UNDE
 One `## <date> — session N` section per attempt; never overwrite prior sections. Each contains: approach path, where they got stuck, hint levels used, final complexity (time/space), exposed weaknesses with the concrete moment each surfaced, and — on a redo — whether a previously flagged weakness resolved. Template in `assets/templates/log.md`.
 
 ### `NOTES.md` (repo-level, a bounded materialized view)
-NOTES.md must stay **constant-size** — it is a human-facing dashboard regenerated from the db each debrief, never an accumulating log. Two parts: (1) the **ability table** — per dimension exactly one row: latest level, *one line* of evidence from the most recent session that exercised it, and a trend arrow derived from `coachdb.py trend` (↑/→/↓ over the last few assessments); (2) **focus next** — at most three tag-linked recommendations. If you feel the urge to keep old evidence "for context", that's what `db/assessments.jsonl` is for — query it, don't hoard it. Template in `assets/templates/NOTES.md`.
+NOTES.md must stay **constant-size** — it is regenerated from the db each debrief, never an accumulating log. It is *your* bounded context: cheap to read mid-session without loading history. (The human-facing view is `assets/dashboard/`, which renders the same db far better than any markdown table can — see SKILL.md § The dashboard. Neither replaces the other, and neither replaces an actual debrief.) Two parts: (1) the **ability table** — per dimension exactly one row: latest level, *one line* of evidence from the most recent session that exercised it, and a trend arrow derived from `coachdb.py trend` (↑/→/↓ over the last few assessments); (2) **focus next** — at most three tag-linked recommendations. If you feel the urge to keep old evidence "for context", that's what `db/assessments.jsonl` is for — query it, don't hoard it. Template in `assets/templates/NOTES.md`.
 
 ### `TAGS.md` (repo-level registry)
 Three namespaces — `#structure:*`, `#technique:*`, `#weakness:*` — each a flat list with a one-line gloss. Add a tag here *before* using it in a commit trailer or log, so tags never fork into synonyms. Seed in `assets/templates/TAGS.md`.
