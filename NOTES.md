@@ -9,38 +9,42 @@ Levels: 1 nascent · 2 developing · 3 competent · 4 proficient · 5 strong.
 
 | Dimension | Level | Latest evidence (one line) | Trend |
 | --- | --- | --- | --- |
-| Decomposition | 3 | 0239: restatement clean on semantics, constraints and range, but output length was asserted as `n-k-1` and only corrected after being told to evaluate it against Example 1 | ↓ |
-| Pattern recognition | 4 | 0239: rebuilt the value-and-lifetime dominance rule in their own words off two L0s, then characterized the whole structure in one pass — though the problem was self-selected *because* the technique had been explained in 1140 | ↑ |
-| Complexity analysis | 3 | 0239: built a valid worst-single-call witness unaided but needed four L1s to price it; separately refuted the judge percentile as a complexity signal by parameter sweep, unaided | → |
-| Implementation correctness | 4 | 0239: first ready snapshot had zero defects across 4,300 oracle cases and the `10^5` ceiling, with the empty-deque hazard anticipated in code | ↑ |
-| Edge-case handling | 3 | 0239: no test authored beyond the two provided examples; the boundary they trusted least was tuned against cases that were already green | → |
-| Optimization | 3 | 0239: hit the optimal class on the first implementation and removed the one-index overlap once derived, but closed without porting the root-caused 2× constant | → |
+| Decomposition | 4 | 2996: isolated the statement's one real ambiguity (must a sequential prefix start at 0) and attached a self-built discriminating instance; right conclusion, imprecise reason, corrected in one exchange | ↑ |
+| Pattern recognition | 4 | 2996: produced the counting bound unprompted — "n elements occupy at most n slots, so the first free slot appears within n probes" — though an Easy problem is a weak test of it | → |
+| Complexity analysis | 4 | 2996: volunteered O(n)/O(n) with a correct pigeonhole justification, then refuted the coach's *wrong* challenge in 2.5 min by tracing `[1,1000000]`; named declared-bound vs operative-bound | ↑ |
+| Implementation correctness | 3 | 2996: first snapshot went 5/5 green carrying a defect in the exact claim flagged 12 min earlier, and the first repair relocated the claim instead of removing it; the second repair was excellent | ↓ |
+| Edge-case handling | 3 | 2996: three tests authored unprompted (first time in four sessions) and one caught a real shipped bug — but all three enter paths already believed correct | → |
+| Optimization | 3 | 0239: hit the optimal class on the first implementation and removed the one-index overlap once derived, but closed without porting the root-caused 2× constant *(not exercised on 2996)* | → |
 
 ## Focus next
 
-- **`#weakness:wrong-proposition` — vary one coordinate in the witness.** Recurred exactly.
-  On 1140 the state-key witness changed both player and `M`; on 0239 the space-bound
-  witness was `[9999…1]` with `k = 9999`, which pins `k ≈ n` and so cannot show which
-  parameter caps the deque. `O(k)` came instantly on being asked to re-run with `k = 2`.
-  Before offering an instance as proof, name the variable it is meant to isolate and check
-  that nothing else moved with it.
-- **`#weakness:off-by-one` — derive boundaries, don't tune them.** Two in one session:
-  `nums.length - k - 1` for the output count, and the answer loop's start index reached by
-  trial and error against the two green examples. When asked afterwards, the correct
-  window-saturation derivation came immediately — the capability is there, it just isn't
-  the first thing reached for. Rule: write the boundary's justification in one line before
-  running anything; if you can't, that's the test to write.
-- **`#weakness:confirmatory-testing` — test the line you trust least.** Third session in
-  this pattern (3345, 1140, 0239), and the sharpest instance: zero self-authored tests, so
-  the trial-and-error boundary was validated only by cases that were already passing.
-  A brute-force oracle is cheap here and can't leak the method — it is the standing answer
-  to "how do I know?" and it is what caught nothing this time only because the code
-  happened to be right.
+- **`#weakness:conjecture-as-proof` — finish the sentence before you write the branch.**
+  On 2996 the claim "prefix of length 1 ⟹ answer is `nums[0]+1`" was asked for as a
+  one-line precondition at APPROACH, skipped, shipped, and then *relocated* rather than
+  removed on first repair — landing on a version that was strictly less true than the
+  original. Both times a disagreeing input produced the right answer within minutes, so
+  the reasoning is there; it just runs after the code instead of before it. Rule: any
+  `if <special case>: return <value>` needs the sentence "`<value>` is the answer whenever
+  ____" written out first. If the blank won't fill, the branch is a guess.
+- **`#weakness:confirmatory-testing` — map tests to code paths, not to interesting inputs.**
+  Fourth session in the pattern (3345, 1140, 0239, 2996) but the first with real movement:
+  three tests written unprompted, one of which caught a genuine bug. What still didn't
+  happen is coverage of the branch that had been named out loud as unjustified minutes
+  earlier — so a defective snapshot went 5/5 green. Diagnostic before declaring ready:
+  list the file's branches, mark which test enters each, and write one for whichever
+  branch has none.
+- **`#weakness:off-by-one` — derive the declared bound from the operative one.**
+  2996 shipped `range(prefix_sum, global_max+2)` plus a `prefix_sum > global_max`
+  short-circuit to cover the empty-range case that bound creates. The pigeonhole argument
+  they already had licenses `prefix_sum + n + 1`, under which the range is never empty and
+  the short-circuit doesn't exist. Same shape as 0239's tuned answer-loop boundary: a
+  correct derivation was available and a patch was reached for first.
 
-**Worth keeping:** the percentile did not get read as a complexity signal. Handed
-`299 ms` / "beats 14.59%" and a measured 2× gap against the reference, they ruled out an
-asymptotic difference by noting the ratio held steady as `k` swept — a parameter-sweep
-argument that separates a constant from a growth term. That is the 1140
-`#weakness:unaudited-instrument` failure inverted into a working proof technique. The
-cross-problem link to the memoization state bound ("like when we use dict to restrict the
-nodes explored in the stone games series") was likewise unprompted and correct.
+**Worth keeping:** two things from 2996. First, `#technique:invariant-repair` — the second
+fix deleted the special case and made the set's meaning true instead
+(`largerNumbers.add(nums[0])`), which is a strictly better move than the return-value patch
+the coach was fishing for, and it was reached *within the session* after the first attempt
+patched the symptom. Second, complexity claims are now being defended rather than asserted:
+0239 refuted the judge percentile as a complexity instrument by parameter sweep, and 2996
+refuted an incorrect challenge from the coach by tracing two lines. That is the most
+durable habit visible in the record right now.
