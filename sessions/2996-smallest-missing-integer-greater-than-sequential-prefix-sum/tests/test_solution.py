@@ -24,3 +24,7 @@ def test_sequentials_but_collission():
 
 def test_prefix_of_length_one():
     assert Solution().missingInteger([5, 1, 2]) == 6
+
+
+def test_prefix_of_length_one_case_b():
+    assert Solution().missingInteger([5, 1, 6]) == 7

@@ -7,7 +7,6 @@ class Solution:
         sequential_end = len(nums)-1
         prefix_sum = 0
         global_max = 0
-        ceil = float("inf")
 
         for idx, elem in enumerate(nums):
             if idx < len(nums) and sequential_end > idx:
@@ -25,7 +24,7 @@ class Solution:
                     largerNumbers.add(elem)
 
         if sequential_end == 0:
-            return nums[0]+1
+            largerNumbers.add(nums[0])
 
         print(f"sum:{prefix_sum}, region:{nums[0:sequential_end+1]}, global_max:{global_max}, numbers:{list(largerNumbers)}")
         if prefix_sum > global_max:
