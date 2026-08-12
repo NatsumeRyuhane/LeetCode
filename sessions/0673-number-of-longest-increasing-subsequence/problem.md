@@ -36,4 +36,20 @@ Signature: `class Solution: def findNumberOfLIS(self, nums: List[int]) -> int:`
 
 ## User's restatement
 
-{Filled in during UNDERSTANDING-CHECK.}
+> The problem is in two parts: 1. we need to find the longest increasing subsequense
+> in nums 2. we need to count every distinct instance of that subsequence. Ex 2
+> returning 5 because it contains exactly 5 subsequences with a length of 1.
+>
+> [...] Because dp[i] is "the longest subsq i can get if i include nums[i]", we can
+> filter the dp array to get a map of destinations - those dp[i] == globalMax is
+> garuanteed to be the end of *every* valid subsequence. But the dp compressed the
+> exact path information other than that.
+>
+> I tried the worst possible idea: enumeration. So if we know global max is k, it is
+> essentially a k-ary tuple of indexes, but this idea sucks so much as it is a
+> factorial one.
+>
+> So for a destination d with dp[d] = k, they can only be the appendix of those
+> positions p that dp[p] = k-1 and p < d, right? [...] Because we are revisiting each
+> previous node at most once for each destination, and we can have at most n
+> destinations, this process is bound to complete within O(n²).
