@@ -84,3 +84,18 @@ both the original row and the correction.
 **Open thread for a redo.** Does the inner scan have to be a scan? State in one sentence the
 question that loop asks of everything to the left of `i`, then ask what would have to be
 true to answer it without visiting every `j`. Left deliberately unanswered here.
+
+**Addendum (post-debrief).** They came back to their own discarded idea — bucketing indices
+by dp length — and were shown that the dismissal (*"traversing a dict[int, List[int]], the
+list is still O(n)"*) rests on an unexamined premise: a bucket must be **traversed** only if
+its contents have no useful order. Asked whether two indices in the same bucket can be
+increasing, they produced the argument unaided, in one message: if `nums[j2] > nums[j1]` for
+`j1 < j2`, then *"there is nothing stops us from tucking it after j1"* — so `j2`'s chain
+would be longer and the two could not share a length. Then named the transfer themselves —
+*"this is like the 0239 again. The order is maintained because the structure forces it."*
+That is the second unprompted cross-problem structural transfer in the record (cf. 0239 →
+the stone-games aggregate bound) and is logged as a supplementary `pattern-recognition` 5.
+One precision for whoever picks this up: the bucket is non-**increasing**, not strictly
+decreasing — equal values cannot chain, so they can share a length (`[2,2]` → bucket
+`[2, 2]`), which decides the comparison side if the scan is ever replaced. What the ordering
+buys was left unexplored by choice; the optimization thread stays open.

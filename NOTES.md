@@ -10,7 +10,7 @@ Levels: 1 nascent · 2 developing · 3 competent · 4 proficient · 5 strong.
 | Dimension | Level | Latest evidence (one line) | Trend |
 | --- | --- | --- | --- |
 | Decomposition | 4 | 0673: restated both halves correctly on first pass — including the index-distinctness reading example 2 forces — and named the difficulty in one sentence: "the dp compressed the exact path information" | → |
-| Pattern recognition | 4 | 0673: rejected tuple enumeration on growth grounds, invented a layered backward walk, then reached the (length, count) pair via a grid-paths analogy off an L0 aimed at their wording, not the idea | → |
+| Pattern recognition | 5 | 0673: asked only whether two indices in one dp-length bucket can be increasing, produced the exchange argument unaided in one message — "nothing stops us from tucking it after j1" — and named the transfer himself: "this is like 0239 again, the order is maintained because the structure forces it" | ↑ |
 | Complexity analysis | 4 | 0673: bounded the walk by *pairs, not paths* before writing code — the exact distinction separating the correct algorithm from the factorial one — then refused to credit their own hash-bucket idea as more than a constant factor | → |
 | Implementation correctness | 4 | 0673: the (len, count) pivot was correct on the first snapshot in one 13-min pass — Accepted first submission, 0 mismatches over 3000 differential cases; got the reset-vs-accumulate trichotomy and the seed right unaided | ↑ |
 | Edge-case handling | 3 | 0673: four tests unprompted with written rationales and *measured* full line+branch coverage — yet two one-token mutants survive all six, so the suite cannot distinguish the load-bearing line from a wrong one | → |
