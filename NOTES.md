@@ -9,42 +9,43 @@ Levels: 1 nascent · 2 developing · 3 competent · 4 proficient · 5 strong.
 
 | Dimension | Level | Latest evidence (one line) | Trend |
 | --- | --- | --- | --- |
-| Decomposition | 4 | 2996: isolated the statement's one real ambiguity (must a sequential prefix start at 0) and attached a self-built discriminating instance; right conclusion, imprecise reason, corrected in one exchange | ↑ |
-| Pattern recognition | 4 | 2996: produced the counting bound unprompted — "n elements occupy at most n slots, so the first free slot appears within n probes" — though an Easy problem is a weak test of it | → |
-| Complexity analysis | 4 | 2996: volunteered O(n)/O(n) with a correct pigeonhole justification, then refuted the coach's *wrong* challenge in 2.5 min by tracing `[1,1000000]`; named declared-bound vs operative-bound | ↑ |
-| Implementation correctness | 3 | 2996: first snapshot went 5/5 green carrying a defect in the exact claim flagged 12 min earlier, and the first repair relocated the claim instead of removing it; the second repair was excellent | ↓ |
-| Edge-case handling | 3 | 2996: three tests authored unprompted (first time in four sessions) and one caught a real shipped bug — but all three enter paths already believed correct | → |
-| Optimization | 3 | 0239: hit the optimal class on the first implementation and removed the one-index overlap once derived, but closed without porting the root-caused 2× constant *(not exercised on 2996)* | → |
+| Decomposition | 4 | 0673: restated both halves correctly on first pass — including the index-distinctness reading example 2 forces — and named the difficulty in one sentence: "the dp compressed the exact path information" | → |
+| Pattern recognition | 4 | 0673: rejected tuple enumeration on growth grounds, invented a layered backward walk, then reached the (length, count) pair via a grid-paths analogy off an L0 aimed at their wording, not the idea | → |
+| Complexity analysis | 4 | 0673: bounded the walk by *pairs, not paths* before writing code — the exact distinction separating the correct algorithm from the factorial one — then refused to credit their own hash-bucket idea as more than a constant factor | → |
+| Implementation correctness | 4 | 0673: the (len, count) pivot was correct on the first snapshot in one 13-min pass — Accepted first submission, 0 mismatches over 3000 differential cases; got the reset-vs-accumulate trichotomy and the seed right unaided | ↑ |
+| Edge-case handling | 3 | 0673: four tests unprompted with written rationales and *measured* full line+branch coverage — yet two one-token mutants survive all six, so the suite cannot distinguish the load-bearing line from a wrong one | → |
+| Optimization | 3 | 0673: correctly self-assessed their own bucket-by-length idea as constant-factor rather than claiming an improvement, but never put the inner scan itself in question and closed with the skeleton intact | → |
 
 ## Focus next
 
-- **`#weakness:conjecture-as-proof` — finish the sentence before you write the branch.**
-  On 2996 the claim "prefix of length 1 ⟹ answer is `nums[0]+1`" was asked for as a
-  one-line precondition at APPROACH, skipped, shipped, and then *relocated* rather than
-  removed on first repair — landing on a version that was strictly less true than the
-  original. Both times a disagreeing input produced the right answer within minutes, so
-  the reasoning is there; it just runs after the code instead of before it. Rule: any
-  `if <special case>: return <value>` needs the sentence "`<value>` is the answer whenever
-  ____" written out first. If the blank won't fill, the branch is a guess.
-- **`#weakness:confirmatory-testing` — map tests to code paths, not to interesting inputs.**
-  Fourth session in the pattern (3345, 1140, 0239, 2996) but the first with real movement:
-  three tests written unprompted, one of which caught a genuine bug. What still didn't
-  happen is coverage of the branch that had been named out loud as unjustified minutes
-  earlier — so a defective snapshot went 5/5 green. Diagnostic before declaring ready:
-  list the file's branches, mark which test enters each, and write one for whichever
-  branch has none.
-- **`#weakness:off-by-one` — derive the declared bound from the operative one.**
-  2996 shipped `range(prefix_sum, global_max+2)` plus a `prefix_sum > global_max`
-  short-circuit to cover the empty-range case that bound creates. The pigeonhole argument
-  they already had licenses `prefix_sum + n + 1`, under which the range is never empty and
-  the short-circuit doesn't exist. Same shape as 0239's tuned answer-loop boundary: a
-  correct derivation was available and a patch was reached for first.
+- **`#weakness:coverage-without-discrimination` — ask what one-token change your suite would
+  miss.** This replaces `#weakness:confirmatory-testing`, which did *not* recur on 0673:
+  every branch got a test, chosen for structural reasons and written down. The successor
+  failure survives that fix. On 0673 the suite had 100% line and branch coverage, and
+  `path_count += pathcnt → += 1` still passed all six tests, because no test ever ran that
+  line with a count above 1. Coverage says a line *executed*; it cannot say the execution
+  could have caught a wrong version. Diagnostic, ~60 seconds: name the one line the whole
+  method rests on, change one token to something plausible-but-wrong, re-run. A surviving
+  mutant is a missing test. **Open rep:** the `test_example_7` for 0673 that kills both
+  mutants was assigned and declined — a count `> 1` that a later cell consumes.
+- **`#weakness:optimize-the-skeleton` — third appearance (3302, 3310, 0673).** The pattern is
+  stable and now well-characterized: every proposed improvement makes the *inner* step
+  cheaper, and the outer loop is never named as an assumption. Credit where due — on 0673
+  the constant-factor idea was self-diagnosed as constant-factor within one message, which
+  is the discipline 3016/3310 lacked. The missing move is upstream of that: after the first
+  inner-loop idea fails to change the bound, state the skeleton out loud ("I visit every
+  earlier index") and ask what a solution that never runs that loop would look like.
+- **`#technique:dp-with-multiplicity` — worth one cold redo.** 0673 is now solved and its
+  optimization thread is deliberately open (see its `log.md`). The transferable half is the
+  pairing rule: overwrite the counter on a strictly better child, add on a tie, never
+  increment by 1, seed at 1, and sum over *every* cell attaining the optimum. Counting-paths
+  variants of a solved optimum recur (grid paths, LIS count, shortest-path counts).
 
-**Worth keeping:** two things from 2996. First, `#technique:invariant-repair` — the second
-fix deleted the special case and made the set's meaning true instead
-(`largerNumbers.add(nums[0])`), which is a strictly better move than the return-value patch
-the coach was fishing for, and it was reached *within the session* after the first attempt
-patched the symptom. Second, complexity claims are now being defended rather than asserted:
-0239 refuted the judge percentile as a complexity instrument by parameter sweep, and 2996
-refuted an incorrect challenge from the coach by tracing two lines. That is the most
-durable habit visible in the record right now.
+**Worth keeping:** two things from 0673. First, the session's decisive move happened *before
+any code* — bounding the backward walk by pairs rather than paths, in their own words, which
+is what turned a factorial idea into an `O(n²)` one; that is the second session running
+(after 2996) where the load-bearing reasoning preceded the implementation instead of
+following it. Second, when challenged on test coverage they made a specific claim, the claim
+was **measured, and it was correct** — the coach's framing was the imprecise one. Insisting
+on measurement over impression, in both directions, is the most durable habit in this record
+(0239 parameter sweep, 2996 two-line trace, 0673 coverage claim).
